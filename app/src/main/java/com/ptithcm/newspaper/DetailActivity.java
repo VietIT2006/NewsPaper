@@ -1,17 +1,5 @@
-package com.ptithcm.newspaper; // Nhớ đổi tên package cho khớp dự án của bạn
+package com.ptithcm.newspaper;
 
-import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.View;
-import android.webkit.WebView;
-import android.widget.ProgressBar;
-import android.widget.Toast;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.os.Bundle;
@@ -22,14 +10,14 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 public class DetailActivity extends AppCompatActivity {
 
     private WebView webViewContent;
@@ -68,9 +56,7 @@ public class DetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // ... (Giữ nguyên hàm scrapeArticleContent của bạn ở đây)
     private void scrapeArticleContent(String url) {
-        // (Sao chép lại nội dung hàm bóc tách HTML như cũ)
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(() -> {
