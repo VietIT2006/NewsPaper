@@ -3,6 +3,8 @@ package com.ptithcm.newspaper.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +23,11 @@ import com.ptithcm.newspaper.R;
 import com.ptithcm.newspaper.model.Article;
 
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHolder> {
     private Context context;
@@ -44,7 +49,6 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Article article = articleList.get(position);
 
-        // 1. Sửa lỗi font chữ tiêu đề (Double Decoding)
         String decodedTitle = article.getTitle();
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             decodedTitle = android.text.Html.fromHtml(decodedTitle, android.text.Html.FROM_HTML_MODE_COMPACT).toString();
@@ -54,9 +58,35 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
             decodedTitle = android.text.Html.fromHtml(decodedTitle).toString();
         }
         holder.tvTitle.setText(decodedTitle);
-        holder.tvDate.setText(article.getPubDate());
 
-        // 2. Lấy ảnh, nếu rỗng thì bóc tách từ Description (Tab Thể thao)
+        String rawDate = article.getPubDate();
+        try {
+            // Định dạng gốc từ rss2json trả về
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            Date dateObj = sdf.parse(rawDate);
+
+            SimpleDateFormat dateOnly = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            String articleDateStr = dateOnly.format(dateObj);
+            String todayStr = dateOnly.format(new Date());
+
+            SimpleDateFormat timeOnly = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            SimpleDateFormat fullFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+
+            if (articleDateStr.equals(todayStr)) {
+                holder.tvDate.setText("Hôm nay, " + timeOnly.format(dateObj));
+                holder.tvDate.setTextColor(Color.parseColor("#E53935"));
+                holder.tvDate.setTypeface(null, Typeface.BOLD);
+            } else {
+                // Ngày cũ: Hiển thị bình thường màu xám
+                holder.tvDate.setText(fullFormat.format(dateObj));
+                holder.tvDate.setTextColor(Color.parseColor("#757575"));
+                holder.tvDate.setTypeface(null, Typeface.NORMAL);
+            }
+        } catch (Exception e) {
+            holder.tvDate.setText(rawDate);
+        }
+
+        // 3. Lấy ảnh, bóc tách ảnh bằng Jsoup cho Tab Thể thao
         String imageUrl = article.getThumbnail();
         if (imageUrl == null || imageUrl.isEmpty()) {
             if (article.getDescription() != null) {
@@ -70,14 +100,14 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
 
         Glide.with(context).load(imageUrl).placeholder(R.drawable.ic_launcher_background).error(R.drawable.ic_launcher_background).into(holder.imgThumbnail);
 
-        // 3. Sự kiện bấm 1 lần: Mở DetailActivity
+        // 4. Sự kiện bấm 1 lần: Mở DetailActivity
         holder.itemView.setOnClickListener(view -> {
             Intent intent = new Intent(context, DetailActivity.class);
             intent.putExtra("ARTICLE_LINK", article.getLink());
             context.startActivity(intent);
         });
 
-        // 4. Sự kiện nhấn giữ (Long Click): Lưu bài viết (Bookmark) bằng Gson
+        // 5. Sự kiện nhấn giữ (Long Click): Lưu bài báo
         holder.itemView.setOnLongClickListener(view -> {
             SharedPreferences prefs = context.getSharedPreferences("FAVORITES", Context.MODE_PRIVATE);
             String savedArticlesJson = prefs.getString("articles", "[]");
@@ -96,12 +126,6 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     @Override
     public int getItemCount() {
         return articleList == null ? 0 : articleList.size();
-    }
-
-    // Hàm Lọc danh sách cho tính năng Tìm kiếm
-    public void filterList(List<Article> filteredList) {
-        this.articleList = filteredList;
-        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

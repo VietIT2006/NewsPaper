@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
@@ -21,8 +22,11 @@ import com.ptithcm.newspaper.api.NewsApi;
 import com.ptithcm.newspaper.model.Article;
 import com.ptithcm.newspaper.model.RssResponse;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,12 +34,15 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
+    private RecyclerView recyclerToday, recyclerSuggest;
+    private TextView tvTitleToday, tvTitleSuggest;
     private ProgressBar progressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
     private TabLayout tabLayout;
-    private ArticleAdapter adapter;
-    private List<Article> articleList;
+
+    private ArticleAdapter todayAdapter, suggestAdapter;
+    private List<Article> articleList; // Danh sách gốc chứa toàn bộ
+    private List<Article> todayList, suggestList; // 2 danh sách phân loại
     private String currentRssUrl = "https://thanhnien.vn/rss/home.rss";
 
     @Override
@@ -47,15 +54,29 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbarMain = findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbarMain);
 
-        recyclerView = findViewById(R.id.recyclerView);
+        // Ánh xạ UI
+        recyclerToday = findViewById(R.id.recyclerToday);
+        recyclerSuggest = findViewById(R.id.recyclerSuggest);
+        tvTitleToday = findViewById(R.id.tvTitleToday);
+        tvTitleSuggest = findViewById(R.id.tvTitleSuggest);
         progressBar = findViewById(R.id.progressBar);
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         tabLayout = findViewById(R.id.tabLayout);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        // Cấu hình LayoutManager
+        recyclerToday.setLayoutManager(new LinearLayoutManager(this));
+        recyclerSuggest.setLayoutManager(new LinearLayoutManager(this));
+
+        // Khởi tạo danh sách và Adapter
         articleList = new ArrayList<>();
-        adapter = new ArticleAdapter(this, articleList);
-        recyclerView.setAdapter(adapter);
+        todayList = new ArrayList<>();
+        suggestList = new ArrayList<>();
+
+        todayAdapter = new ArticleAdapter(this, todayList);
+        suggestAdapter = new ArticleAdapter(this, suggestList);
+
+        recyclerToday.setAdapter(todayAdapter);
+        recyclerSuggest.setAdapter(suggestAdapter);
 
         setupTabs();
 
@@ -79,10 +100,10 @@ public class MainActivity extends AppCompatActivity {
                     case 1: currentRssUrl = "https://thanhnien.vn/rss/thoi-su.rss"; break;
                     case 2: currentRssUrl = "https://thanhnien.vn/rss/the-gioi.rss"; break;
                     case 3: currentRssUrl = "https://thanhnien.vn/rss/the-thao.rss"; break;
-                    case 4: currentRssUrl = "https://thanhnien.vn/rss/cong-nghe.rss"; break; // Đã sửa link công nghệ
+                    case 4: currentRssUrl = "https://thanhnien.vn/rss/cong-nghe.rss"; break;
                 }
                 articleList.clear();
-                adapter.notifyDataSetChanged();
+                splitAndDisplayArticles(articleList); // Làm rỗng giao diện khi đổi tab
                 fetchNews(currentRssUrl);
             }
             @Override
@@ -106,7 +127,8 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     articleList.clear();
                     articleList.addAll(response.body().getItems());
-                    adapter.notifyDataSetChanged();
+                    // Gọi hàm phân loại hiển thị
+                    splitAndDisplayArticles(articleList);
                 } else {
                     Toast.makeText(MainActivity.this, "Lỗi tải dữ liệu", Toast.LENGTH_SHORT).show();
                 }
@@ -118,6 +140,40 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Lỗi mạng", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    // --- THUẬT TOÁN PHÂN LOẠI TIN TỨC ---
+    private void splitAndDisplayArticles(List<Article> sourceList) {
+        todayList.clear();
+        suggestList.clear();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String todayStr = sdf.format(new Date()); // Lấy ngày hiện tại (VD: 2026-05-27)
+
+        for (Article article : sourceList) {
+            String pubDate = article.getPubDate();
+            // Nếu ngày đăng bài trùng với chuỗi ngày hiện tại -> Đưa vào danh sách Hôm nay
+            if (pubDate != null && pubDate.startsWith(todayStr)) {
+                todayList.add(article);
+            } else {
+                suggestList.add(article);
+            }
+        }
+
+        // Để tránh khu vực Hôm nay quá dài, ta chỉ giữ 5 bài mới nhất, phần dư đẩy xuống Gợi ý
+        if (todayList.size() > 5) {
+            suggestList.addAll(0, todayList.subList(5, todayList.size()));
+            todayList = new ArrayList<>(todayList.subList(0, 5));
+        }
+
+        // Nếu không có tin nào trong hôm nay, tự động ẩn khu vực đó đi
+        boolean hasTodayNews = !todayList.isEmpty();
+        tvTitleToday.setVisibility(hasTodayNews ? View.VISIBLE : View.GONE);
+        recyclerToday.setVisibility(hasTodayNews ? View.VISIBLE : View.GONE);
+
+        // Cập nhật giao diện
+        todayAdapter.notifyDataSetChanged();
+        suggestAdapter.notifyDataSetChanged();
     }
 
     // --- TÍNH NĂNG TÌM KIẾM ---
@@ -133,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) { return false; }
+
             @Override
             public boolean onQueryTextChange(String newText) {
                 List<Article> filteredList = new ArrayList<>();
@@ -141,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                         filteredList.add(article);
                     }
                 }
-                adapter.filterList(filteredList);
+                splitAndDisplayArticles(filteredList);
                 return true;
             }
         });
