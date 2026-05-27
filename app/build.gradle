@@ -48,4 +48,5 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.17.2'
     // Thư viện vuốt để làm mới
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation 'com.google.code.gson:gson:2.10.1'
 }

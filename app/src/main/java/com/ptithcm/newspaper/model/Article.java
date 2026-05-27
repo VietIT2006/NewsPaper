@@ -12,6 +12,8 @@ public class Article {
     @SerializedName("thumbnail")
     private String thumbnail;
 
+    @SerializedName("description")
+    private String description;
     @SerializedName("pubDate")
     private String pubDate;
 
@@ -48,6 +50,11 @@ public class Article {
     public void setPubDate(String pubDate) {
         this.pubDate = pubDate;
     }
+    public String getDescription() {
+        return description;
+    }
 
-    // --- KẾT THÚC CÁC HÀM GETTER VÀ SETTER ---
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

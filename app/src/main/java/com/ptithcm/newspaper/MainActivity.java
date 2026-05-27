@@ -1,11 +1,15 @@
-package com.ptithcm.newspaper; // Đổi lại cho khớp với package của bạn
+package com.ptithcm.newspaper;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -32,20 +36,22 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ArticleAdapter adapter;
     private List<Article> articleList;
-    private String currentRssUrl = "https://thanhnien.vn/rss/home.rss"; // Mặc định là Trang chủ
+    private String currentRssUrl = "https://thanhnien.vn/rss/home.rss";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Ánh xạ
+        // Khởi tạo Toolbar
+        Toolbar toolbarMain = findViewById(R.id.toolbarMain);
+        setSupportActionBar(toolbarMain);
+
         recyclerView = findViewById(R.id.recyclerView);
         progressBar = findViewById(R.id.progressBar);
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         tabLayout = findViewById(R.id.tabLayout);
 
-        // Cấu hình RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         articleList = new ArrayList<>();
         adapter = new ArticleAdapter(this, articleList);
@@ -53,12 +59,8 @@ public class MainActivity extends AppCompatActivity {
 
         setupTabs();
 
-        // Xử lý sự kiện vuốt để làm mới
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            fetchNews(currentRssUrl);
-        });
+        swipeRefreshLayout.setOnRefreshListener(() -> fetchNews(currentRssUrl));
 
-        // Lần đầu mở app
         fetchNews(currentRssUrl);
     }
 
@@ -77,9 +79,8 @@ public class MainActivity extends AppCompatActivity {
                     case 1: currentRssUrl = "https://thanhnien.vn/rss/thoi-su.rss"; break;
                     case 2: currentRssUrl = "https://thanhnien.vn/rss/the-gioi.rss"; break;
                     case 3: currentRssUrl = "https://thanhnien.vn/rss/the-thao.rss"; break;
-                    case 4: currentRssUrl = "https://thanhnien.vn/rss/cong-nghe-game.rss"; break;
+                    case 4: currentRssUrl = "https://thanhnien.vn/rss/cong-nghe.rss"; break; // Đã sửa link công nghệ
                 }
-                // Khi đổi Tab, xóa danh sách cũ và tải danh sách mới
                 articleList.clear();
                 adapter.notifyDataSetChanged();
                 fetchNews(currentRssUrl);
@@ -92,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fetchNews(String rssUrl) {
-        // Chỉ hiện ProgressBar xoay ở giữa khi không phải do thao tác vuốt
         if (!swipeRefreshLayout.isRefreshing() && articleList.isEmpty()) {
             progressBar.setVisibility(View.VISIBLE);
         }
@@ -102,8 +102,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<RssResponse> call, Response<RssResponse> response) {
                 progressBar.setVisibility(View.GONE);
-                swipeRefreshLayout.setRefreshing(false); // Tắt vòng xoay của việc vuốt
-
+                swipeRefreshLayout.setRefreshing(false);
                 if (response.isSuccessful() && response.body() != null) {
                     articleList.clear();
                     articleList.addAll(response.body().getItems());
@@ -112,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Lỗi tải dữ liệu", Toast.LENGTH_SHORT).show();
                 }
             }
-
             @Override
             public void onFailure(Call<RssResponse> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
@@ -120,5 +118,33 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Lỗi mạng", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    // --- TÍNH NĂNG TÌM KIẾM ---
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuItem searchItem = menu.add("Tìm kiếm").setIcon(android.R.drawable.ic_menu_search);
+        searchItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+
+        SearchView searchView = new SearchView(this);
+        searchItem.setActionView(searchView);
+        searchView.setQueryHint("Nhập tên bài báo...");
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) { return false; }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                List<Article> filteredList = new ArrayList<>();
+                for (Article article : articleList) {
+                    if (article.getTitle().toLowerCase().contains(newText.toLowerCase())) {
+                        filteredList.add(article);
+                    }
+                }
+                adapter.filterList(filteredList);
+                return true;
+            }
+        });
+        return true;
     }
 }
