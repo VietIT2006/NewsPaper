@@ -1,3 +1,19 @@
 <resources>
-    <string name="app_name">NewsPaper</string>
+    <string name="app_name">Siêu Báo 24h</string>
+    <string name="tab_home">Trang chủ</string>
+    <string name="tab_news">Thời sự</string>
+    <string name="tab_world">Thế giới</string>
+    <string name="tab_sports">Thể thao</string>
+    <string name="tab_tech">Công nghệ</string>
+
+    <string name="title_today">Tin Hôm Nay</string>
+    <string name="title_suggest">Gợi Ý Cho Bạn</string>
+    <string name="search">Tìm kiếm</string>
+    <string name="search_hint">Nhập tên bài báo...</string>
+    <string name="share">Chia sẻ</string>
+
+    <string name="today">Hôm nay</string>
+    <string name="saved_success">Đã lưu bài viết vào mục Yêu thích!</string>
+    <string name="error_data">Lỗi tải dữ liệu</string>
+    <string name="error_network">Lỗi mạng</string>
 </resources>

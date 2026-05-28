@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="#007BFF"
-        app:title="Siêu Báo 24h"
+        app:title="@string/app_name"
         app:titleTextColor="#FFFFFF" />
 
     <com.google.android.material.tabs.TabLayout
@@ -19,7 +19,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
-        android:contentDescription="Thanh chọn chuyên mục báo"
         app:tabMode="scrollable"
         app:tabIndicatorColor="#007BFF"
         app:tabSelectedTextColor="#007BFF" />
@@ -47,7 +46,7 @@
                         android:id="@+id/tvTitleToday"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tin Hôm Nay"
+                        android:text="@string/title_today"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:textColor="#E53935"
@@ -63,7 +62,7 @@
                         android:id="@+id/tvTitleSuggest"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Gợi Ý Cho Bạn"
+                        android:text="@string/title_suggest"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:textColor="#333333"

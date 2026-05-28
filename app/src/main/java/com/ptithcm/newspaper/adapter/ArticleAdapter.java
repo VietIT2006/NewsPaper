@@ -73,7 +73,8 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
             SimpleDateFormat fullFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
 
             if (articleDateStr.equals(todayStr)) {
-                holder.tvDate.setText("Hôm nay, " + timeOnly.format(dateObj));
+                // Gọi chữ "Hôm nay" (Today) từ file từ điển strings.xml thông qua context
+                holder.tvDate.setText(context.getString(R.string.today) + ", " + timeOnly.format(dateObj));
                 holder.tvDate.setTextColor(Color.parseColor("#E53935"));
                 holder.tvDate.setTypeface(null, Typeface.BOLD);
             } else {
@@ -118,7 +119,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
             savedList.add(article);
             prefs.edit().putString("articles", new Gson().toJson(savedList)).apply();
 
-            Toast.makeText(context, "Đã lưu bài viết vào mục Yêu thích!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, context.getString(R.string.saved_success), Toast.LENGTH_SHORT).show();
             return true;
         });
     }

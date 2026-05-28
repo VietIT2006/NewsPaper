@@ -86,11 +86,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupTabs() {
-        tabLayout.addTab(tabLayout.newTab().setText("Trang chủ"));
-        tabLayout.addTab(tabLayout.newTab().setText("Thời sự"));
-        tabLayout.addTab(tabLayout.newTab().setText("Thế giới"));
-        tabLayout.addTab(tabLayout.newTab().setText("Thể thao"));
-        tabLayout.addTab(tabLayout.newTab().setText("Công nghệ"));
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.tab_home)));
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.tab_news)));
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.tab_world)));
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.tab_sports)));
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.tab_tech)));
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -179,13 +179,31 @@ public class MainActivity extends AppCompatActivity {
     // --- TÍNH NĂNG TÌM KIẾM ---
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem searchItem = menu.add("Tìm kiếm").setIcon(android.R.drawable.ic_menu_search);
+        // 1. TẠO NÚT ĐỔI NGÔN NGỮ (LANGUAGE)
+        MenuItem langItem = menu.add("Language").setIcon(android.R.drawable.ic_menu_mapmode);
+        langItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        langItem.setOnMenuItemClickListener(item -> {
+            // Kiểm tra ngôn ngữ hiện tại và đảo ngược lại
+            androidx.core.os.LocaleListCompat currentLocale = androidx.appcompat.app.AppCompatDelegate.getApplicationLocales();
+            if (currentLocale.isEmpty() || currentLocale.get(0).getLanguage().equals("vi")) {
+                androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(androidx.core.os.LocaleListCompat.forLanguageTags("en"));
+            } else {
+                androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(androidx.core.os.LocaleListCompat.forLanguageTags("vi"));
+            }
+            return true;
+        });
+
+        // 2. TẠO NÚT TÌM KIẾM (Đã gọi từ tệp strings.xml)
+        MenuItem searchItem = menu.add(getString(R.string.search)).setIcon(android.R.drawable.ic_menu_search);
         searchItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
 
         SearchView searchView = new SearchView(this);
         searchItem.setActionView(searchView);
-        searchView.setQueryHint("Nhập tên bài báo...");
 
+        // Gọi dòng gợi ý "Nhập tên bài báo..." từ tệp strings.xml
+        searchView.setQueryHint(getString(R.string.search_hint));
+
+        // 3. XỬ LÝ LỌC DANH SÁCH BÀI BÁO
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) { return false; }
