@@ -1,8 +1,7 @@
-package com.ptithcm.newspaper.adapter;
+package com.ptithcm.newspaper.ui.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
@@ -18,9 +17,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.ptithcm.newspaper.DetailActivity;
 import com.ptithcm.newspaper.R;
-import com.ptithcm.newspaper.model.Article;
+import com.ptithcm.newspaper.data.model.Article;
+import com.ptithcm.newspaper.ui.activity.DetailActivity;
+import com.ptithcm.newspaper.util.PreferencesManager;
+
+import org.jsoup.Jsoup;
 
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
@@ -61,7 +63,6 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
 
         String rawDate = article.getPubDate();
         try {
-            // Định dạng gốc từ rss2json trả về
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             Date dateObj = sdf.parse(rawDate);
 
@@ -73,12 +74,10 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
             SimpleDateFormat fullFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
 
             if (articleDateStr.equals(todayStr)) {
-                // Gọi chữ "Hôm nay" (Today) từ file từ điển strings.xml thông qua context
                 holder.tvDate.setText(context.getString(R.string.today) + ", " + timeOnly.format(dateObj));
                 holder.tvDate.setTextColor(Color.parseColor("#E53935"));
                 holder.tvDate.setTypeface(null, Typeface.BOLD);
             } else {
-                // Ngày cũ: Hiển thị bình thường màu xám
                 holder.tvDate.setText(fullFormat.format(dateObj));
                 holder.tvDate.setTextColor(Color.parseColor("#757575"));
                 holder.tvDate.setTypeface(null, Typeface.NORMAL);
@@ -87,11 +86,10 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
             holder.tvDate.setText(rawDate);
         }
 
-        // 3. Lấy ảnh, bóc tách ảnh bằng Jsoup cho Tab Thể thao
         String imageUrl = article.getThumbnail();
         if (imageUrl == null || imageUrl.isEmpty()) {
             if (article.getDescription() != null) {
-                org.jsoup.nodes.Document doc = org.jsoup.Jsoup.parse(article.getDescription());
+                org.jsoup.nodes.Document doc = Jsoup.parse(article.getDescription());
                 org.jsoup.nodes.Element img = doc.selectFirst("img");
                 if (img != null) {
                     imageUrl = img.attr("src");
@@ -101,7 +99,6 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
 
         Glide.with(context).load(imageUrl).placeholder(R.drawable.ic_launcher_background).error(R.drawable.ic_launcher_background).into(holder.imgThumbnail);
 
-        // 4. Sự kiện bấm 1 lần: Mở DetailActivity
         holder.itemView.setOnClickListener(view -> {
             Intent intent = new Intent(context, DetailActivity.class);
             intent.putExtra("ARTICLE_LINK", article.getLink());
@@ -110,17 +107,9 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
             context.startActivity(intent);
         });
 
-        // 5. Sự kiện nhấn giữ (Long Click): Lưu bài báo
         holder.itemView.setOnLongClickListener(view -> {
-            SharedPreferences prefs = context.getSharedPreferences("FAVORITES", Context.MODE_PRIVATE);
-            String savedArticlesJson = prefs.getString("articles", "[]");
-
-            Type type = new TypeToken<ArrayList<Article>>(){}.getType();
-            ArrayList<Article> savedList = new Gson().fromJson(savedArticlesJson, type);
-
-            savedList.add(article);
-            prefs.edit().putString("articles", new Gson().toJson(savedList)).apply();
-
+            PreferencesManager prefs = new PreferencesManager(context);
+            prefs.addFavorite(article);
             Toast.makeText(context, context.getString(R.string.saved_success), Toast.LENGTH_SHORT).show();
             return true;
         });
@@ -142,3 +131,4 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         }
     }
 }
+

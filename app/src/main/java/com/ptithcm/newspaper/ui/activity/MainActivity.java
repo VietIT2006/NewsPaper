@@ -1,4 +1,4 @@
-package com.ptithcm.newspaper;
+package com.ptithcm.newspaper.ui.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -17,11 +17,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
-import com.ptithcm.newspaper.adapter.ArticleAdapter;
-import com.ptithcm.newspaper.api.ApiClient;
-import com.ptithcm.newspaper.api.NewsApi;
-import com.ptithcm.newspaper.model.Article;
-import com.ptithcm.newspaper.model.RssResponse;
+import com.ptithcm.newspaper.R;
+import com.ptithcm.newspaper.data.model.Article;
+import com.ptithcm.newspaper.data.model.RssResponse;
+import com.ptithcm.newspaper.data.remote.ApiClient;
+import com.ptithcm.newspaper.data.remote.NewsApi;
+import com.ptithcm.newspaper.ui.adapter.ArticleAdapter;
+import com.ptithcm.newspaper.util.PreferencesManager;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
 
     private ArticleAdapter todayAdapter, suggestAdapter;
-    private List<Article> articleList; // Danh sách gốc chứa toàn bộ
-    private List<Article> todayList, suggestList; // 2 danh sách phân loại
+    private List<Article> articleList;
+    private List<Article> todayList, suggestList;
     private String currentRssUrl = "https://thanhnien.vn/rss/home.rss";
     private PreferencesManager preferencesManager;
 
@@ -51,16 +53,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        // Khởi tạo PreferencesManager
         preferencesManager = new PreferencesManager(this);
         
         setContentView(R.layout.activity_main);
 
-        // Khởi tạo Toolbar
         Toolbar toolbarMain = findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbarMain);
 
-        // Ánh xạ UI
         recyclerToday = findViewById(R.id.recyclerToday);
         recyclerSuggest = findViewById(R.id.recyclerSuggest);
         tvTitleToday = findViewById(R.id.tvTitleToday);
@@ -69,11 +68,9 @@ public class MainActivity extends AppCompatActivity {
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         tabLayout = findViewById(R.id.tabLayout);
 
-        // Cấu hình LayoutManager
         recyclerToday.setLayoutManager(new LinearLayoutManager(this));
         recyclerSuggest.setLayoutManager(new LinearLayoutManager(this));
 
-        // Khởi tạo danh sách và Adapter
         articleList = new ArrayList<>();
         todayList = new ArrayList<>();
         suggestList = new ArrayList<>();
@@ -109,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                     case 4: currentRssUrl = "https://thanhnien.vn/rss/cong-nghe.rss"; break;
                 }
                 articleList.clear();
-                splitAndDisplayArticles(articleList); // Làm rỗng giao diện khi đổi tab
+                splitAndDisplayArticles(articleList);
                 fetchNews(currentRssUrl);
             }
             @Override
@@ -133,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     articleList.clear();
                     articleList.addAll(response.body().getItems());
-                    // Gọi hàm phân loại hiển thị
                     splitAndDisplayArticles(articleList);
                 } else {
                     Toast.makeText(MainActivity.this, "Lỗi tải dữ liệu", Toast.LENGTH_SHORT).show();
@@ -148,17 +144,15 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // --- THUẬT TOÁN PHÂN LOẠI TIN TỨC ---
     private void splitAndDisplayArticles(List<Article> sourceList) {
         todayList.clear();
         suggestList.clear();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        String todayStr = sdf.format(new Date()); // Lấy ngày hiện tại (VD: 2026-05-27)
+        String todayStr = sdf.format(new Date());
 
         for (Article article : sourceList) {
             String pubDate = article.getPubDate();
-            // Nếu ngày đăng bài trùng với chuỗi ngày hiện tại -> Đưa vào danh sách Hôm nay
             if (pubDate != null && pubDate.startsWith(todayStr)) {
                 todayList.add(article);
             } else {
@@ -166,26 +160,21 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        // Để tránh khu vực Hôm nay quá dài, ta chỉ giữ 5 bài mới nhất, phần dư đẩy xuống Gợi ý
         if (todayList.size() > 5) {
             suggestList.addAll(0, todayList.subList(5, todayList.size()));
             todayList = new ArrayList<>(todayList.subList(0, 5));
         }
 
-        // Nếu không có tin nào trong hôm nay, tự động ẩn khu vực đó đi
         boolean hasTodayNews = !todayList.isEmpty();
         tvTitleToday.setVisibility(hasTodayNews ? View.VISIBLE : View.GONE);
         recyclerToday.setVisibility(hasTodayNews ? View.VISIBLE : View.GONE);
 
-        // Cập nhật giao diện
         todayAdapter.notifyDataSetChanged();
         suggestAdapter.notifyDataSetChanged();
     }
 
-    // --- TÍNH NĂNG TÌM KIẾM VÀ MENU ---
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // 1. NÚT YÊUTHÍCH
         MenuItem favItem = menu.add("Yêu thích").setIcon(android.R.drawable.ic_menu_add);
         favItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         favItem.setOnMenuItemClickListener(item -> {
@@ -193,7 +182,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        // 2. NÚT LỊCH SỬ ĐỌC
         MenuItem historyItem = menu.add("Lịch sử").setIcon(android.R.drawable.ic_menu_agenda);
         historyItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         historyItem.setOnMenuItemClickListener(item -> {
@@ -201,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        // 3. NÚT THỐNG KÊ
         MenuItem statsItem = menu.add("Thống kê").setIcon(android.R.drawable.ic_menu_info_details);
         statsItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         statsItem.setOnMenuItemClickListener(item -> {
@@ -209,7 +196,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        // 4. NÚT CÀI ĐẶT
         MenuItem settingsItem = menu.add("Cài đặt").setIcon(android.R.drawable.ic_menu_preferences);
         settingsItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         settingsItem.setOnMenuItemClickListener(item -> {
@@ -217,11 +203,9 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        // 5. NÚT ĐỔI NGÔN NGỮ (LANGUAGE)
         MenuItem langItem = menu.add("Language").setIcon(android.R.drawable.ic_menu_mapmode);
         langItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         langItem.setOnMenuItemClickListener(item -> {
-            // Kiểm tra ngôn ngữ hiện tại và đảo ngược lại
             androidx.core.os.LocaleListCompat currentLocale = androidx.appcompat.app.AppCompatDelegate.getApplicationLocales();
             if (currentLocale.isEmpty() || currentLocale.get(0).getLanguage().equals("vi")) {
                 androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(androidx.core.os.LocaleListCompat.forLanguageTags("en"));
@@ -231,7 +215,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        // 6. NÚT GIỚI THIỆU
         MenuItem aboutItem = menu.add("Giới thiệu").setIcon(android.R.drawable.ic_menu_help);
         aboutItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         aboutItem.setOnMenuItemClickListener(item -> {
@@ -239,17 +222,13 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        // 7. NÚT TÌM KIẾM (Đã gọi từ tệp strings.xml)
         MenuItem searchItem = menu.add(getString(R.string.search)).setIcon(android.R.drawable.ic_menu_search);
         searchItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
 
         SearchView searchView = new SearchView(this);
         searchItem.setActionView(searchView);
-
-        // Gọi dòng gợi ý "Nhập tên bài báo..." từ tệp strings.xml
         searchView.setQueryHint(getString(R.string.search_hint));
 
-        // 8. XỬ LÝ LỌC DANH SÁCH BÀI BÁO
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) { return false; }
@@ -269,3 +248,4 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 }
+

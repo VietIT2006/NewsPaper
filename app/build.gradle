@@ -49,4 +49,7 @@ dependencies {
     // Thư viện vuốt để làm mới
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'com.google.code.gson:gson:2.10.1'
+    
+    // CardView cho Stats Activity
+    implementation 'androidx.cardview:cardview:1.0.0'
 }

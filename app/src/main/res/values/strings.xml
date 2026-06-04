@@ -16,4 +16,10 @@
     <string name="saved_success">Đã lưu bài viết vào mục Yêu thích!</string>
     <string name="error_data">Lỗi tải dữ liệu</string>
     <string name="error_network">Lỗi mạng</string>
+
+    <!-- Tính năng mới -->
+    <string name="favorites">Yêu thích</string>
+    <string name="history">Lịch sử</string>
+    <string name="dark_mode">Chế độ tối</string>
+    <string name="light_mode">Chế độ sáng</string>
 </resources>

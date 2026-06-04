@@ -1,7 +1,8 @@
-package com.ptithcm.newspaper;
+package com.ptithcm.newspaper.ui.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,11 +14,13 @@ import android.webkit.WebView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.ptithcm.newspaper.R;
+import com.ptithcm.newspaper.data.model.Article;
+import com.ptithcm.newspaper.util.PreferencesManager;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-
-import com.ptithcm.newspaper.model.Article;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -46,7 +49,7 @@ public class DetailActivity extends AppCompatActivity {
         progressBarDetail = findViewById(R.id.progressBarDetail);
 
         webViewContent.getSettings().setJavaScriptEnabled(true);
-        webViewContent.getSettings().setDefaultTextEncodingName("utf-8"); // Sửa lỗi font chữ
+        webViewContent.getSettings().setDefaultTextEncodingName("utf-8");
 
         String articleUrl = getIntent().getStringExtra("ARTICLE_LINK");
         String articleTitle = getIntent().getStringExtra("ARTICLE_TITLE");
@@ -56,7 +59,6 @@ public class DetailActivity extends AppCompatActivity {
         
         if (articleUrl != null) {
             scrapeArticleContent(articleUrl);
-            // Lưu vào lịch sử đọc
             Article article = new Article();
             article.setLink(articleUrl);
             article.setTitle(articleTitle != null ? articleTitle : "Bài viết không tên");
@@ -65,7 +67,6 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
-    // --- TÍNH NĂNG CHIA SẺ VÀ YÊUTHÍCH ---
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, 1, 0, "Yêu thích").setIcon(android.R.drawable.ic_menu_add).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
@@ -79,7 +80,6 @@ public class DetailActivity extends AppCompatActivity {
             finish();
             return true;
         } else if (item.getItemId() == 1) {
-            // Thêm vào yêu thích
             if (currentArticleLink != null) {
                 Article article = new Article();
                 article.setLink(currentArticleLink);
@@ -137,3 +137,4 @@ public class DetailActivity extends AppCompatActivity {
         });
     }
 }
+
