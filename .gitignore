@@ -13,3 +13,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+.FEATURES.md
+.CHANGES_SUMMARY.md
+.FILES_MODIFIED.md
+.INSTALLATION.md
+.LAYERED_ARCHITECTURE.md
+.MIGRATION_GUIDE.md
