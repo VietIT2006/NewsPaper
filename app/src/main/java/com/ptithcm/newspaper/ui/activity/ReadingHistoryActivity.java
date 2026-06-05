@@ -34,7 +34,7 @@ public class ReadingHistoryActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Lịch sử đọc");
+            getSupportActionBar().setTitle(getString(R.string.history_title));
         }
 
         recyclerHistory = findViewById(R.id.recyclerHistory);
@@ -49,7 +49,7 @@ public class ReadingHistoryActivity extends AppCompatActivity {
         List<Article> history = preferencesManager.getHistory();
 
         if (history.isEmpty()) {
-            tvEmptyMessage.setText("Chưa có lịch sử đọc. Bài viết bạn xem sẽ được lưu lại ở đây!");
+            tvEmptyMessage.setText(getString(R.string.empty_history));
             recyclerHistory.setVisibility(android.view.View.GONE);
             tvEmptyMessage.setVisibility(android.view.View.VISIBLE);
         } else {
@@ -62,7 +62,7 @@ public class ReadingHistoryActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, 1, 0, "Xóa lịch sử")
+        menu.add(0, 1, 0, getString(R.string.delete_history))
                 .setIcon(android.R.drawable.ic_menu_delete)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         return true;
@@ -75,7 +75,7 @@ public class ReadingHistoryActivity extends AppCompatActivity {
             return true;
         } else if (item.getItemId() == 1) {
             preferencesManager.clearHistory();
-            Toast.makeText(this, "Đã xóa lịch sử đọc", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.history_deleted), Toast.LENGTH_SHORT).show();
             loadHistory();
             return true;
         }

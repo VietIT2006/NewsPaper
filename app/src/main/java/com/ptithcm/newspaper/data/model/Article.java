@@ -18,6 +18,14 @@ public class Article {
     @SerializedName("pubDate")
     private String pubDate;
 
+    // New fields for advanced features
+    private String note;           // Bookmark note
+    private String tags;           // Comma-separated tags
+    private String sentiment;      // "positive", "negative", "neutral"
+    private String category;       // Category name for stats
+    private String savedHtml;      // Saved HTML for offline reading
+    private String sourceName;     // RSS source name
+
     public String getTitle() {
         return title;
     }
@@ -57,5 +65,52 @@ public class Article {
     public void setDescription(String description) {
         this.description = description;
     }
-}
 
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
+
+    public String getSentiment() {
+        return sentiment;
+    }
+
+    public void setSentiment(String sentiment) {
+        this.sentiment = sentiment;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getSavedHtml() {
+        return savedHtml;
+    }
+
+    public void setSavedHtml(String savedHtml) {
+        this.savedHtml = savedHtml;
+    }
+
+    public String getSourceName() {
+        return sourceName;
+    }
+
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
+    }
+}

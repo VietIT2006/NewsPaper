@@ -17,9 +17,147 @@
     <string name="error_data">Lỗi tải dữ liệu</string>
     <string name="error_network">Lỗi mạng</string>
 
-    <!-- Tính năng mới -->
     <string name="favorites">Yêu thích</string>
     <string name="history">Lịch sử</string>
     <string name="dark_mode">Chế độ tối</string>
     <string name="light_mode">Chế độ sáng</string>
+    <string name="notifications">Thông báo</string>
+
+    <!-- Settings labels -->
+    <string name="settings_title">Cài đặt</string>
+    <string name="about_title">Về ứng dụng</string>
+    <string name="history_title">Lịch sử đọc</string>
+    <string name="favorites_title">Bài viết yêu thích</string>
+    <string name="detail_title">Chi tiết bài viết</string>
+    <string name="stats_title">Thống kê</string>
+    <string name="language">Ngôn ngữ</string>
+
+    <!-- Stats -->
+    <string name="stats_total_read">Bài viết đã đọc: %d</string>
+    <string name="stats_total_favorites">Bài viết yêu thích: %d</string>
+    <string name="stats_from_history">Từ lịch sử của bạn</string>
+    <string name="stats_saved_articles">Bài viết đã lưu</string>
+    <string name="stats_keep_reading">Hãy tiếp tục theo dõi các tin tức mới nhất!</string>
+    <string name="stats_reading_message">Bạn đã dành thời gian để đọc %d bài viết. Tiếp tục theo dõi những tin tức mới nhất!</string>
+
+    <!-- Actions -->
+    <string name="delete_history">Xóa lịch sử</string>
+    <string name="history_deleted">Đã xóa lịch sử đọc</string>
+    <string name="added_to_favorites">Đã thêm vào yêu thích!</string>
+    <string name="share_subject">Gửi bạn bài báo này:</string>
+    <string name="share_via">Chia sẻ qua:</string>
+    <string name="dark_mode_on">Dark Mode bật</string>
+    <string name="dark_mode_off">Dark Mode tắt</string>
+    <string name="notifications_on">Thông báo bật</string>
+    <string name="notifications_off">Thông báo tắt</string>
+    <string name="no_content">Không thể bóc tách nội dung!</string>
+    <string name="connection_error">Lỗi kết nối mạng</string>
+
+    <!-- About -->
+    <string name="about_version">Siêu Báo 24h - Phiên bản 2.0</string>
+    <string name="about_description">Ứng dụng đọc tin tức hiện đại với các tính năng:\n\n✓ Đọc tin tức từ nhiều chuyên mục\n✓ Lưu bài viết yêu thích\n✓ Xem lịch sử đọc\n✓ Chế độ tối (Dark Mode)\n✓ Tìm kiếm nâng cao\n✓ Chia sẻ bài viết\n✓ Xem thống kê đọc\n✓ Đọc báo bằng giọng nói (TTS)\n✓ Chế độ đọc sạch\n✓ Tóm tắt AI &amp; Chat AI\n✓ Dịch sang tiếng Anh\n✓ Lưu offline\n✓ Đa nguồn tin\n\nCảm ơn bạn đã sử dụng ứng dụng của chúng tôi!</string>
+    <string name="about_developer">Phát triển bởi: PTIT HCM Development Team</string>
+
+    <!-- Empty states -->
+    <string name="empty_favorites">Chưa có bài viết yêu thích. Nhấn giữ bài viết để thêm vào danh sách yêu thích!</string>
+    <string name="empty_history">Chưa có lịch sử đọc. Bài viết bạn xem sẽ được lưu lại ở đây!</string>
+    <string name="untitled_article">Bài viết không tên</string>
+
+    <!-- Settings sections -->
+    <string name="section_general">Chung</string>
+    <string name="section_preferences">Tùy chỉnh</string>
+    <string name="section_info">Thông tin</string>
+
+    <!-- Context Menu & Popups -->
+    <string name="action_translate">Dịch tiếng Anh</string>
+    <string name="action_ask_ai">Hỏi AI</string>
+    <string name="translating">Đang dịch...</string>
+    <string name="asking_ai">Đang suy nghĩ...</string>
+    <string name="popup_close">Đóng</string>
+    <string name="api_error">Có lỗi xảy ra, vui lòng thử lại!</string>
+
+    <!-- TTS (Text-to-Speech) -->
+    <string name="tts_play">Phát giọng đọc</string>
+    <string name="tts_pause">Tạm dừng</string>
+    <string name="tts_stop">Dừng</string>
+    <string name="tts_speed">Tốc độ</string>
+    <string name="tts_not_available">Tính năng đọc giọng nói không khả dụng trên thiết bị này</string>
+    <string name="tts_no_content">Không có nội dung để đọc</string>
+
+    <!-- Reader Mode -->
+    <string name="reader_mode">Chế độ đọc</string>
+    <string name="reader_font_size">Cỡ chữ</string>
+    <string name="reader_font_family">Phông chữ</string>
+    <string name="reader_background">Nền</string>
+    <string name="reader_font_sans">Sans-serif</string>
+    <string name="reader_font_serif">Serif</string>
+    <string name="reader_font_mono">Monospace</string>
+    <string name="reader_bg_white">Trắng</string>
+    <string name="reader_bg_sepia">Kem</string>
+    <string name="reader_bg_dark">Tối</string>
+
+    <!-- AI Summary -->
+    <string name="ai_summary">Tóm tắt AI</string>
+    <string name="ai_summary_loading">Đang tóm tắt bài viết...</string>
+    <string name="ai_summary_error">Không thể tóm tắt bài viết. Vui lòng thử lại.</string>
+    <string name="ai_summary_copy">Sao chép</string>
+    <string name="ai_summary_copied">Đã sao chép tóm tắt!</string>
+
+    <!-- AI Chat -->
+    <string name="ai_chat_title">💬 Chat AI</string>
+    <string name="ai_chat_hint">Nhập câu hỏi...</string>
+    <string name="ai_chat_welcome">Xin chào! Tôi đã đọc bài viết \"%s\". Bạn muốn hỏi gì về bài viết này?</string>
+    <string name="ai_chat_error">Có lỗi xảy ra. Vui lòng thử lại.</string>
+    <string name="ai_chat_no_content">Chưa có nội dung bài viết để chat.</string>
+
+    <!-- Bookmark Notes -->
+    <string name="bookmark_add_note">Thêm ghi chú</string>
+    <string name="bookmark_note_hint">Nhập ghi chú cho bài viết...</string>
+    <string name="bookmark_tags_hint">Thêm tag (cách nhau bởi dấu phẩy)</string>
+    <string name="bookmark_save">Lưu</string>
+    <string name="bookmark_cancel">Hủy</string>
+    <string name="bookmark_saved">Đã lưu ghi chú!</string>
+    <string name="bookmark_tag_important">quan trọng</string>
+    <string name="bookmark_tag_read_later">đọc sau</string>
+    <string name="bookmark_tag_interesting">thú vị</string>
+
+    <!-- Sentiment Analysis -->
+    <string name="sentiment_positive">Tích cực</string>
+    <string name="sentiment_negative">Tiêu cực</string>
+    <string name="sentiment_neutral">Trung lập</string>
+    <string name="sentiment_analyzing">Đang phân tích cảm xúc...</string>
+
+    <!-- Offline -->
+    <string name="offline_save">Lưu offline</string>
+    <string name="offline_saved">Đã lưu bài viết offline!</string>
+    <string name="offline_already_saved">Bài viết đã được lưu offline</string>
+    <string name="offline_deleted">Đã xóa bài viết offline</string>
+    <string name="offline_title">📥 Bài viết đã lưu</string>
+    <string name="offline_empty">Chưa có bài viết nào được lưu offline.</string>
+    <string name="offline_clear_all">Xóa tất cả</string>
+    <string name="offline_cleared">Đã xóa tất cả bài viết offline</string>
+    <string name="offline_reading">Đang đọc offline</string>
+
+    <!-- Push Notifications -->
+    <string name="notif_channel_name">Tin tức mới</string>
+    <string name="notif_channel_desc">Thông báo khi có tin tức mới</string>
+    <string name="notif_new_article">📰 Tin mới</string>
+
+    <!-- Multi-Source -->
+    <string name="sources_title">📡 Nguồn tin tức</string>
+    <string name="sources_add">+ Thêm nguồn tin</string>
+    <string name="sources_add_title">Thêm nguồn RSS</string>
+    <string name="sources_name_hint">Tên nguồn tin</string>
+    <string name="sources_url_hint">URL RSS feed</string>
+    <string name="sources_added">Đã thêm nguồn tin mới!</string>
+    <string name="sources_removed">Đã xóa nguồn tin</string>
+    <string name="sources_invalid">URL không hợp lệ</string>
+
+    <!-- Dashboard Stats -->
+    <string name="stats_streak">🔥 Streak: %d ngày liên tục</string>
+    <string name="stats_streak_zero">Hãy bắt đầu đọc tin ngay hôm nay!</string>
+    <string name="stats_7days">Bài đọc 7 ngày qua</string>
+    <string name="stats_top_categories">📁 Top chuyên mục</string>
+    <string name="stats_total_offline">Bài viết đã lưu offline: %d</string>
+    <string name="stats_no_data">Chưa có dữ liệu thống kê</string>
 </resources>

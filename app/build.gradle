@@ -4,9 +4,7 @@ plugins {
 
 android {
     namespace 'com.ptithcm.newspaper'
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.ptithcm.newspaper"
@@ -52,4 +50,10 @@ dependencies {
     
     // CardView cho Stats Activity
     implementation 'androidx.cardview:cardview:1.0.0'
+
+    // WorkManager cho kiểm tra tin tức mới định kỳ
+    implementation 'androidx.work:work-runtime:2.9.1'
+    
+    // WorkManager cho kiểm tra tin tức mới nền
+    implementation 'androidx.work:work-runtime:2.9.0'
 }

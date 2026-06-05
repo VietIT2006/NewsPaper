@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F5F5F5">
+    android:background="@color/backgroundColor">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarAbout"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="#007BFF"
-        app:titleTextColor="#FFFFFF" />
+        android:background="@color/colorPrimary"
+        app:titleTextColor="@color/white" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -33,10 +33,10 @@
             android:id="@+id/tvAppVersion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Siêu Báo 24h - Phiên bản 1.0"
+            android:text="@string/app_name"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#333333"
+            android:textColor="@color/textPrimary"
             android:gravity="center"
             android:layout_marginBottom="20dp" />
 
@@ -44,7 +44,7 @@
         <View
             android:layout_width="100dp"
             android:layout_height="2dp"
-            android:background="#007BFF"
+            android:background="@color/colorPrimary"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="20dp" />
 
@@ -53,9 +53,8 @@
             android:id="@+id/tvAppDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Ứng dụng đọc tin tức hiện đại"
             android:textSize="14sp"
-            android:textColor="#555555"
+            android:textColor="@color/textSecondary"
             android:gravity="center"
             android:lineSpacingExtra="6dp"
             android:layout_marginBottom="30dp" />
@@ -65,13 +64,11 @@
             android:id="@+id/tvDeveloper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Phát triển bởi: PTIT HCM"
             android:textSize="12sp"
-            android:textColor="#999999"
+            android:textColor="@color/textMuted"
             android:gravity="center"
             android:layout_marginTop="20dp" />
 
     </LinearLayout>
 
 </LinearLayout>
-

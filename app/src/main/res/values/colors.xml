@@ -2,4 +2,45 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    
+    <!-- Theme colors -->
+    <color name="colorPrimary">#007BFF</color>
+    <color name="colorPrimaryDark">#0056b3</color>
+    <color name="colorAccent">#007BFF</color>
+    
+    <!-- Light theme surface/background -->
+    <color name="backgroundColor">#F5F5F5</color>
+    <color name="surfaceColor">#FFFFFF</color>
+    <color name="cardBackground">#FFFFFF</color>
+    
+    <!-- Text colors for light theme -->
+    <color name="textPrimary">#333333</color>
+    <color name="textSecondary">#555555</color>
+    <color name="textHint">#757575</color>
+    <color name="textMuted">#999999</color>
+    
+    <!-- Divider -->
+    <color name="dividerColor">#E0E0E0</color>
+    <color name="imagePlaceholder">#E0E0E0</color>
+    
+    <!-- Accent -->
+    <color name="todayHighlight">#E53935</color>
+    
+    <!-- Sentiment colors -->
+    <color name="sentimentPositive">#4CAF50</color>
+    <color name="sentimentNegative">#F44336</color>
+    <color name="sentimentNeutral">#FF9800</color>
+    
+    <!-- Feature colors -->
+    <color name="colorSuccess">#4CAF50</color>
+    <color name="colorWarning">#FF9800</color>
+    <color name="chatBubbleUser">#E3F2FD</color>
+    <color name="chatBubbleAi">#F5F5F5</color>
+    <color name="ttsAccent">#9C27B0</color>
+    <color name="offlineAccent">#00897B</color>
+    <color name="statsCardBlue">#42A5F5</color>
+    <color name="statsCardGreen">#66BB6A</color>
+    <color name="statsCardOrange">#FFA726</color>
+    <color name="statsCardPurple">#AB47BC</color>
+    <color name="readerSepia">#F5E6CC</color>
 </resources>

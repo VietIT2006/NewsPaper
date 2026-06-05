@@ -20,26 +20,16 @@ public class AboutActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Về ứng dụng");
+            getSupportActionBar().setTitle(getString(R.string.about_title));
         }
 
         TextView tvAppVersion = findViewById(R.id.tvAppVersion);
         TextView tvAppDescription = findViewById(R.id.tvAppDescription);
         TextView tvDeveloper = findViewById(R.id.tvDeveloper);
 
-        tvAppVersion.setText("Siêu Báo 24h - Phiên bản 1.0");
-        tvAppDescription.setText(
-            "Ứng dụng đọc tin tức hiện đại với các tính năng:\n\n" +
-            "✓ Đọc tin tức từ nhiều chuyên mục\n" +
-            "✓ Lưu bài viết yêu thích\n" +
-            "✓ Xem lịch sử đọc\n" +
-            "✓ Chế độ tối (Dark Mode)\n" +
-            "✓ Tìm kiếm nâng cao\n" +
-            "✓ Chia sẻ bài viết\n" +
-            "✓ Xem thống kê đọc\n\n" +
-            "Cảm ơn bạn đã sử dụng ứng dụng của chúng tôi!"
-        );
-        tvDeveloper.setText("Phát triển bởi: PTIT HCM Development Team");
+        tvAppVersion.setText(getString(R.string.about_version));
+        tvAppDescription.setText(getString(R.string.about_description));
+        tvDeveloper.setText(getString(R.string.about_developer));
     }
 
     @Override

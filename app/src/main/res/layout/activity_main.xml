@@ -4,24 +4,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F5F5F5">
+    android:background="@color/backgroundColor">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarMain"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="#007BFF"
+        android:background="@color/colorPrimary"
         app:title="@string/app_name"
-        app:titleTextColor="#FFFFFF" />
+        app:titleTextColor="@color/white" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
+        android:background="@color/surfaceColor"
         app:tabMode="scrollable"
-        app:tabIndicatorColor="#007BFF"
-        app:tabSelectedTextColor="#007BFF" />
+        app:tabIndicatorColor="@color/colorPrimary"
+        app:tabSelectedTextColor="@color/colorPrimary"
+        app:tabTextColor="@color/textHint" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
@@ -49,7 +50,7 @@
                         android:text="@string/title_today"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:textColor="#E53935"
+                        android:textColor="@color/todayHighlight"
                         android:layout_marginBottom="8dp"/>
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -65,7 +66,7 @@
                         android:text="@string/title_suggest"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:textColor="#333333"
+                        android:textColor="@color/textPrimary"
                         android:layout_marginTop="20dp"
                         android:layout_marginBottom="8dp"/>
 

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark theme surface/background -->
+    <color name="backgroundColor">#121212</color>
+    <color name="surfaceColor">#1E1E1E</color>
+    <color name="cardBackground">#2C2C2C</color>
+    
+    <!-- Text colors for dark theme -->
+    <color name="textPrimary">#E0E0E0</color>
+    <color name="textSecondary">#B0B0B0</color>
+    <color name="textHint">#9E9E9E</color>
+    <color name="textMuted">#757575</color>
+    
+    <!-- Divider -->
+    <color name="dividerColor">#424242</color>
+    <color name="imagePlaceholder">#424242</color>
+</resources>

@@ -16,4 +16,148 @@
     <string name="saved_success">Saved to Favorites!</string>
     <string name="error_data">Failed to load data</string>
     <string name="error_network">Network error</string>
+
+    <string name="favorites">Favorites</string>
+    <string name="history">History</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="light_mode">Light Mode</string>
+    <string name="notifications">Notifications</string>
+
+    <!-- Settings labels -->
+    <string name="settings_title">Settings</string>
+    <string name="about_title">About</string>
+    <string name="history_title">Reading History</string>
+    <string name="favorites_title">Favorite Articles</string>
+    <string name="detail_title">Article Detail</string>
+    <string name="stats_title">Statistics</string>
+    <string name="language">Language</string>
+
+    <!-- Stats -->
+    <string name="stats_total_read">Articles Read: %d</string>
+    <string name="stats_total_favorites">Favorite Articles: %d</string>
+    <string name="stats_from_history">From your reading history</string>
+    <string name="stats_saved_articles">Saved articles</string>
+    <string name="stats_keep_reading">Keep reading the latest news!</string>
+    <string name="stats_reading_message">You\'ve spent time reading %d articles. Keep following the latest news!</string>
+
+    <!-- Actions -->
+    <string name="delete_history">Clear History</string>
+    <string name="history_deleted">Reading history cleared</string>
+    <string name="added_to_favorites">Added to Favorites!</string>
+    <string name="share_subject">Check out this article:</string>
+    <string name="share_via">Share via:</string>
+    <string name="dark_mode_on">Dark Mode enabled</string>
+    <string name="dark_mode_off">Dark Mode disabled</string>
+    <string name="notifications_on">Notifications enabled</string>
+    <string name="notifications_off">Notifications disabled</string>
+    <string name="no_content">Unable to extract content!</string>
+    <string name="connection_error">Network connection error</string>
+
+    <!-- About -->
+    <string name="about_version">Super News 24h - Version 2.0</string>
+    <string name="about_description">Modern news reading app with features:\n\n✓ Read news from multiple categories\n✓ Save favorite articles\n✓ View reading history\n✓ Dark Mode\n✓ Advanced search\n✓ Share articles\n✓ Reading statistics\n✓ Text-to-Speech\n✓ Reader Mode\n✓ AI Summary &amp; Chat\n✓ Translate to English\n✓ Save Offline\n✓ Multi-Source RSS\n\nThank you for using our app!</string>
+    <string name="about_developer">Developed by: PTIT HCM Development Team</string>
+
+    <!-- Empty states -->
+    <string name="empty_favorites">No favorite articles yet. Long press an article to add it to favorites!</string>
+    <string name="empty_history">No reading history yet. Articles you view will be saved here!</string>
+    <string name="untitled_article">Untitled article</string>
+
+    <!-- Settings sections -->
+    <string name="section_general">General</string>
+    <string name="section_preferences">Preferences</string>
+    <string name="section_info">Information</string>
+
+    <!-- Context Menu & Popups -->
+    <string name="action_translate">Translate to English</string>
+    <string name="action_ask_ai">Ask AI</string>
+    <string name="translating">Translating...</string>
+    <string name="asking_ai">Thinking...</string>
+    <string name="popup_close">Close</string>
+    <string name="api_error">An error occurred, please try again!</string>
+
+    <!-- TTS (Text-to-Speech) -->
+    <string name="tts_play">Play Audio</string>
+    <string name="tts_pause">Pause</string>
+    <string name="tts_stop">Stop</string>
+    <string name="tts_speed">Speed</string>
+    <string name="tts_not_available">TTS is not available on this device</string>
+    <string name="tts_no_content">No content to read</string>
+
+    <!-- Reader Mode -->
+    <string name="reader_mode">Reader Mode</string>
+    <string name="reader_font_size">Font Size</string>
+    <string name="reader_font_family">Font Family</string>
+    <string name="reader_background">Background</string>
+    <string name="reader_font_sans">Sans-serif</string>
+    <string name="reader_font_serif">Serif</string>
+    <string name="reader_font_mono">Monospace</string>
+    <string name="reader_bg_white">White</string>
+    <string name="reader_bg_sepia">Sepia</string>
+    <string name="reader_bg_dark">Dark</string>
+
+    <!-- AI Summary -->
+    <string name="ai_summary">AI Summary</string>
+    <string name="ai_summary_loading">Summarizing article...</string>
+    <string name="ai_summary_error">Could not summarize article. Please try again.</string>
+    <string name="ai_summary_copy">Copy</string>
+    <string name="ai_summary_copied">Summary copied!</string>
+
+    <!-- AI Chat -->
+    <string name="ai_chat_title">💬 AI Chat</string>
+    <string name="ai_chat_hint">Ask a question...</string>
+    <string name="ai_chat_welcome">Hello! I have read the article "%s". What would you like to ask?</string>
+    <string name="ai_chat_error">An error occurred. Please try again.</string>
+    <string name="ai_chat_no_content">No article content to chat about.</string>
+
+    <!-- Bookmark Notes -->
+    <string name="bookmark_add_note">Add Note</string>
+    <string name="bookmark_note_hint">Enter note for this article...</string>
+    <string name="bookmark_tags_hint">Add tags (comma separated)</string>
+    <string name="bookmark_save">Save</string>
+    <string name="bookmark_cancel">Cancel</string>
+    <string name="bookmark_saved">Note saved!</string>
+    <string name="bookmark_tag_important">important</string>
+    <string name="bookmark_tag_read_later">read later</string>
+    <string name="bookmark_tag_interesting">interesting</string>
+
+    <!-- Sentiment Analysis -->
+    <string name="sentiment_positive">Positive</string>
+    <string name="sentiment_negative">Negative</string>
+    <string name="sentiment_neutral">Neutral</string>
+    <string name="sentiment_analyzing">Analyzing sentiment...</string>
+
+    <!-- Offline -->
+    <string name="offline_save">Save Offline</string>
+    <string name="offline_saved">Article saved offline!</string>
+    <string name="offline_already_saved">Article is already saved offline</string>
+    <string name="offline_deleted">Offline article deleted</string>
+    <string name="offline_title">📥 Saved Articles</string>
+    <string name="offline_empty">No articles saved offline yet.</string>
+    <string name="offline_clear_all">Clear All</string>
+    <string name="offline_cleared">All offline articles cleared</string>
+    <string name="offline_reading">Reading offline</string>
+
+    <!-- Push Notifications -->
+    <string name="notif_channel_name">Breaking News</string>
+    <string name="notif_channel_desc">Notifications for new articles</string>
+    <string name="notif_new_article">📰 New Article</string>
+
+    <!-- Multi-Source -->
+    <string name="sources_title">📡 News Sources</string>
+    <string name="sources_add">+ Add Source</string>
+    <string name="sources_add_title">Add RSS Source</string>
+    <string name="sources_name_hint">Source Name</string>
+    <string name="sources_url_hint">RSS Feed URL</string>
+    <string name="sources_added">New source added!</string>
+    <string name="sources_removed">Source removed</string>
+    <string name="sources_invalid">Invalid URL</string>
+
+    <!-- Dashboard Stats -->
+    <string name="stats_streak">🔥 Streak: %d days</string>
+    <string name="stats_streak_zero">Start reading today!</string>
+    <string name="stats_7days">Last 7 days</string>
+    <string name="stats_top_categories">📁 Top Categories</string>
+    <string name="stats_total_offline">Offline Saved Articles: %d</string>
+    <string name="stats_no_data">No statistical data yet</string>
 </resources>

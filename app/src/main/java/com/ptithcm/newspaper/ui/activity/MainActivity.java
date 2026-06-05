@@ -20,6 +20,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.ptithcm.newspaper.R;
 import com.ptithcm.newspaper.data.model.Article;
 import com.ptithcm.newspaper.data.model.RssResponse;
+import com.ptithcm.newspaper.data.model.RssSource;
 import com.ptithcm.newspaper.data.remote.ApiClient;
 import com.ptithcm.newspaper.data.remote.NewsApi;
 import com.ptithcm.newspaper.ui.adapter.ArticleAdapter;
@@ -35,6 +36,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import com.ptithcm.newspaper.util.NewsCheckWorker;
+import java.util.concurrent.TimeUnit;
+
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerToday, recyclerSuggest;
@@ -48,17 +55,21 @@ public class MainActivity extends AppCompatActivity {
     private List<Article> todayList, suggestList;
     private String currentRssUrl = "https://thanhnien.vn/rss/home.rss";
     private PreferencesManager preferencesManager;
+    private String currentSourceName = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
         preferencesManager = new PreferencesManager(this);
-        
         setContentView(R.layout.activity_main);
 
         Toolbar toolbarMain = findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbarMain);
+
+        // Start background news checker
+        PeriodicWorkRequest newsCheckRequest = new PeriodicWorkRequest.Builder(NewsCheckWorker.class, 15, TimeUnit.MINUTES).build();
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork("NewsCheck", ExistingPeriodicWorkPolicy.KEEP, newsCheckRequest);
 
         recyclerToday = findViewById(R.id.recyclerToday);
         recyclerSuggest = findViewById(R.id.recyclerSuggest);
@@ -81,39 +92,52 @@ public class MainActivity extends AppCompatActivity {
         recyclerToday.setAdapter(todayAdapter);
         recyclerSuggest.setAdapter(suggestAdapter);
 
-        setupTabs();
-
         swipeRefreshLayout.setOnRefreshListener(() -> fetchNews(currentRssUrl));
+    }
 
-        fetchNews(currentRssUrl);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setupTabs(); // Re-setup tabs in case user changed sources in settings
     }
 
     private void setupTabs() {
-        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.tab_home)));
-        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.tab_news)));
-        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.tab_world)));
-        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.tab_sports)));
-        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.tab_tech)));
+        tabLayout.removeAllTabs();
+        tabLayout.clearOnTabSelectedListeners();
+        
+        List<RssSource> sources = preferencesManager.getEnabledSources();
+        if (sources.isEmpty()) {
+            sources.add(new RssSource("Thanh Niên", "https://thanhnien.vn/rss/home.rss", true));
+        }
+
+        for (RssSource source : sources) {
+            tabLayout.addTab(tabLayout.newTab().setText(source.getName()));
+        }
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                switch (tab.getPosition()) {
-                    case 0: currentRssUrl = "https://thanhnien.vn/rss/home.rss"; break;
-                    case 1: currentRssUrl = "https://thanhnien.vn/rss/thoi-su.rss"; break;
-                    case 2: currentRssUrl = "https://thanhnien.vn/rss/the-gioi.rss"; break;
-                    case 3: currentRssUrl = "https://thanhnien.vn/rss/the-thao.rss"; break;
-                    case 4: currentRssUrl = "https://thanhnien.vn/rss/cong-nghe.rss"; break;
+                int position = tab.getPosition();
+                if (position >= 0 && position < sources.size()) {
+                    currentRssUrl = sources.get(position).getUrl();
+                    currentSourceName = sources.get(position).getName();
+                    articleList.clear();
+                    splitAndDisplayArticles(articleList);
+                    fetchNews(currentRssUrl);
                 }
-                articleList.clear();
-                splitAndDisplayArticles(articleList);
-                fetchNews(currentRssUrl);
             }
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {}
             @Override
             public void onTabReselected(TabLayout.Tab tab) {}
         });
+
+        // Load first tab if not loaded
+        if (articleList.isEmpty() && !sources.isEmpty()) {
+            currentRssUrl = sources.get(0).getUrl();
+            currentSourceName = sources.get(0).getName();
+            fetchNews(currentRssUrl);
+        }
     }
 
     private void fetchNews(String rssUrl) {
@@ -129,17 +153,23 @@ public class MainActivity extends AppCompatActivity {
                 swipeRefreshLayout.setRefreshing(false);
                 if (response.isSuccessful() && response.body() != null) {
                     articleList.clear();
-                    articleList.addAll(response.body().getItems());
+                    List<Article> fetchedItems = response.body().getItems();
+                    // Tag articles with their source name and default category
+                    for (Article a : fetchedItems) {
+                        a.setSourceName(currentSourceName);
+                        a.setCategory(currentSourceName); 
+                    }
+                    articleList.addAll(fetchedItems);
                     splitAndDisplayArticles(articleList);
                 } else {
-                    Toast.makeText(MainActivity.this, "Lỗi tải dữ liệu", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, getString(R.string.error_data), Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
             public void onFailure(Call<RssResponse> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
                 swipeRefreshLayout.setRefreshing(false);
-                Toast.makeText(MainActivity.this, "Lỗi mạng", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getString(R.string.error_network), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -175,50 +205,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem favItem = menu.add("Yêu thích").setIcon(android.R.drawable.ic_menu_add);
-        favItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        favItem.setOnMenuItemClickListener(item -> {
-            startActivity(new Intent(MainActivity.this, FavoritesActivity.class));
-            return true;
-        });
-
-        MenuItem historyItem = menu.add("Lịch sử").setIcon(android.R.drawable.ic_menu_agenda);
-        historyItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        historyItem.setOnMenuItemClickListener(item -> {
-            startActivity(new Intent(MainActivity.this, ReadingHistoryActivity.class));
-            return true;
-        });
-
-        MenuItem statsItem = menu.add("Thống kê").setIcon(android.R.drawable.ic_menu_info_details);
-        statsItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        statsItem.setOnMenuItemClickListener(item -> {
-            startActivity(new Intent(MainActivity.this, StatsActivity.class));
-            return true;
-        });
-
-        MenuItem settingsItem = menu.add("Cài đặt").setIcon(android.R.drawable.ic_menu_preferences);
+        MenuItem settingsItem = menu.add(getString(R.string.settings_title)).setIcon(android.R.drawable.ic_menu_preferences);
         settingsItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         settingsItem.setOnMenuItemClickListener(item -> {
             startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-            return true;
-        });
-
-        MenuItem langItem = menu.add("Language").setIcon(android.R.drawable.ic_menu_mapmode);
-        langItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        langItem.setOnMenuItemClickListener(item -> {
-            androidx.core.os.LocaleListCompat currentLocale = androidx.appcompat.app.AppCompatDelegate.getApplicationLocales();
-            if (currentLocale.isEmpty() || currentLocale.get(0).getLanguage().equals("vi")) {
-                androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(androidx.core.os.LocaleListCompat.forLanguageTags("en"));
-            } else {
-                androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(androidx.core.os.LocaleListCompat.forLanguageTags("vi"));
-            }
-            return true;
-        });
-
-        MenuItem aboutItem = menu.add("Giới thiệu").setIcon(android.R.drawable.ic_menu_help);
-        aboutItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-        aboutItem.setOnMenuItemClickListener(item -> {
-            startActivity(new Intent(MainActivity.this, AboutActivity.class));
             return true;
         });
 
@@ -248,4 +238,3 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 }
-

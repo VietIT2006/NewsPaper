@@ -1,12 +1,16 @@
 package com.ptithcm.newspaper.ui.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.os.LocaleListCompat;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ptithcm.newspaper.R;
@@ -27,11 +31,12 @@ public class SettingsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Cài đặt");
+            getSupportActionBar().setTitle(getString(R.string.settings_title));
         }
 
         preferencesManager = new PreferencesManager(this);
-        
+
+        // Switches
         switchDarkMode = findViewById(R.id.switchDarkMode);
         switchNotifications = findViewById(R.id.switchNotifications);
 
@@ -41,18 +46,59 @@ public class SettingsActivity extends AppCompatActivity {
         switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
             preferencesManager.setDarkMode(isChecked);
             if (isChecked) {
-                androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES);
-                Toast.makeText(this, "Dark Mode bật", Toast.LENGTH_SHORT).show();
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                Toast.makeText(this, getString(R.string.dark_mode_on), Toast.LENGTH_SHORT).show();
             } else {
-                androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO);
-                Toast.makeText(this, "Dark Mode tắt", Toast.LENGTH_SHORT).show();
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                Toast.makeText(this, getString(R.string.dark_mode_off), Toast.LENGTH_SHORT).show();
             }
         });
 
         switchNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> {
             preferencesManager.setNotificationsEnabled(isChecked);
-            Toast.makeText(this, isChecked ? "Thông báo bật" : "Thông báo tắt", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, isChecked ? getString(R.string.notifications_on) : getString(R.string.notifications_off), Toast.LENGTH_SHORT).show();
         });
+
+        // Navigation buttons
+        findViewById(R.id.btnFavorites).setOnClickListener(v ->
+                startActivity(new Intent(this, FavoritesActivity.class)));
+
+        findViewById(R.id.btnHistory).setOnClickListener(v ->
+                startActivity(new Intent(this, ReadingHistoryActivity.class)));
+
+        findViewById(R.id.btnOffline).setOnClickListener(v ->
+                startActivity(new Intent(this, SavedArticlesActivity.class)));
+
+        findViewById(R.id.btnSources).setOnClickListener(v ->
+                startActivity(new Intent(this, SourceManagerActivity.class)));
+
+        findViewById(R.id.btnStats).setOnClickListener(v ->
+                startActivity(new Intent(this, StatsActivity.class)));
+
+        findViewById(R.id.btnAbout).setOnClickListener(v ->
+                startActivity(new Intent(this, AboutActivity.class)));
+
+        // Language switcher
+        TextView tvCurrentLanguage = findViewById(R.id.tvCurrentLanguage);
+        updateLanguageLabel(tvCurrentLanguage);
+
+        findViewById(R.id.btnLanguage).setOnClickListener(v -> {
+            LocaleListCompat currentLocale = AppCompatDelegate.getApplicationLocales();
+            if (currentLocale.isEmpty() || currentLocale.get(0).getLanguage().equals("vi")) {
+                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("en"));
+            } else {
+                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("vi"));
+            }
+        });
+    }
+
+    private void updateLanguageLabel(TextView tvCurrentLanguage) {
+        LocaleListCompat currentLocale = AppCompatDelegate.getApplicationLocales();
+        if (currentLocale.isEmpty() || currentLocale.get(0).getLanguage().equals("vi")) {
+            tvCurrentLanguage.setText("Tiếng Việt");
+        } else {
+            tvCurrentLanguage.setText("English");
+        }
     }
 
     @Override
@@ -64,4 +110,3 @@ public class SettingsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 }
-
