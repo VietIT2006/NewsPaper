@@ -69,7 +69,7 @@ public class DetailActivity extends AppCompatActivity implements TextToSpeech.On
     // Reader Mode
     private ImageView btnReaderMode;
 
-    private static final String GEMINI_API_KEY = "REMOVED";
+    private static final String GEMINI_API_KEY = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
