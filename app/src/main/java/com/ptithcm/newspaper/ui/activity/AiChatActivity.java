@@ -33,7 +33,7 @@ import java.util.concurrent.Executors;
 
 public class AiChatActivity extends AppCompatActivity {
 
-    private static final String GEMINI_API_KEY = "REMOVED";
+    private static final String GEMINI_API_KEY = "";
 
     private RecyclerView recyclerChat;
     private EditText etChatInput;
