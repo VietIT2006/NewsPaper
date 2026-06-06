@@ -19,3 +19,4 @@ local.properties
 .INSTALLATION.md
 .LAYERED_ARCHITECTURE.md
 .MIGRATION_GUIDE.md
+.env
