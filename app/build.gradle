@@ -2,6 +2,12 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
+def envFile = rootProject.file(".env")
+def envProperties = new Properties()
+if (envFile.exists()) {
+    envFile.withInputStream { envProperties.load(it) }
+}
+
 android {
     namespace 'com.ptithcm.newspaper'
     compileSdk 36
@@ -14,6 +20,12 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        
+        buildConfigField "String", "GEMINI_API_KEY", "\"${envProperties.getProperty('GOOGLE_API_KEY', '')}\""
+    }
+
+    buildFeatures {
+        buildConfig true
     }
 
     buildTypes {

@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
+import com.ptithcm.newspaper.BuildConfig;
 import com.ptithcm.newspaper.R;
 import com.ptithcm.newspaper.data.model.ChatMessage;
 import com.ptithcm.newspaper.ui.adapter.ChatAdapter;
@@ -33,7 +34,7 @@ import java.util.concurrent.Executors;
 
 public class AiChatActivity extends AppCompatActivity {
 
-    private static final String GEMINI_API_KEY = "";
+    private static final String GEMINI_API_KEY = BuildConfig.GEMINI_API_KEY;
 
     private RecyclerView recyclerChat;
     private EditText etChatInput;
