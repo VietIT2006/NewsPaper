@@ -62,6 +62,21 @@
         <activity
             android:name=".ui.activity.SourceManagerActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.activity.ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activity.MomoPaymentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activity.PayosActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activity.PremiumActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activity.AdminRevenueActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

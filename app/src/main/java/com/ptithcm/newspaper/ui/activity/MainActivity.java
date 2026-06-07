@@ -23,6 +23,7 @@ import com.ptithcm.newspaper.data.model.RssResponse;
 import com.ptithcm.newspaper.data.model.RssSource;
 import com.ptithcm.newspaper.data.remote.ApiClient;
 import com.ptithcm.newspaper.data.remote.NewsApi;
+import com.ptithcm.newspaper.data.remote.UserApi;
 import com.ptithcm.newspaper.ui.adapter.ArticleAdapter;
 import com.ptithcm.newspaper.util.PreferencesManager;
 
@@ -104,40 +105,56 @@ public class MainActivity extends AppCompatActivity {
     private void setupTabs() {
         tabLayout.removeAllTabs();
         tabLayout.clearOnTabSelectedListeners();
-        
-        List<RssSource> sources = preferencesManager.getEnabledSources();
-        if (sources.isEmpty()) {
-            sources.add(new RssSource("Thanh Niên", "https://thanhnien.vn/rss/home.rss", true));
-        }
 
-        for (RssSource source : sources) {
-            tabLayout.addTab(tabLayout.newTab().setText(source.getName()));
-        }
-
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        UserApi userApi = com.ptithcm.newspaper.data.remote.BackendApiClient.getClient().create(UserApi.class);
+        userApi.getSources().enqueue(new Callback<UserApi.SourceResponse>() {
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                int position = tab.getPosition();
-                if (position >= 0 && position < sources.size()) {
-                    currentRssUrl = sources.get(position).getUrl();
-                    currentSourceName = sources.get(position).getName();
-                    articleList.clear();
-                    splitAndDisplayArticles(articleList);
-                    fetchNews(currentRssUrl);
+            public void onResponse(Call<UserApi.SourceResponse> call, Response<UserApi.SourceResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().success) {
+                    List<RssSource> allSources = response.body().sources;
+                    List<RssSource> enabledSources = new ArrayList<>();
+                    if (allSources != null) {
+                        for (RssSource s : allSources) {
+                            if (s.isEnabled()) enabledSources.add(s);
+                        }
+                    }
+                    
+                    if (enabledSources.isEmpty()) {
+                        enabledSources.add(new RssSource(1, "Thanh Niên", "https://thanhnien.vn/rss/home.rss", true));
+                    }
+
+                    tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                        @Override
+                        public void onTabSelected(TabLayout.Tab tab) {
+                            int position = tab.getPosition();
+                            if (position >= 0 && position < enabledSources.size()) {
+                                currentRssUrl = enabledSources.get(position).getUrl();
+                                currentSourceName = enabledSources.get(position).getName();
+                                articleList.clear();
+                                splitAndDisplayArticles(articleList);
+                                swipeRefreshLayout.setRefreshing(true);
+                                fetchNews(currentRssUrl);
+                            }
+                        }
+                        @Override
+                        public void onTabUnselected(TabLayout.Tab tab) {}
+                        @Override
+                        public void onTabReselected(TabLayout.Tab tab) {}
+                    });
+
+                    for (RssSource source : enabledSources) {
+                        tabLayout.addTab(tabLayout.newTab().setText(source.getName()));
+                    }
+
+
                 }
             }
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {}
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {}
-        });
 
-        // Load first tab if not loaded
-        if (articleList.isEmpty() && !sources.isEmpty()) {
-            currentRssUrl = sources.get(0).getUrl();
-            currentSourceName = sources.get(0).getName();
-            fetchNews(currentRssUrl);
-        }
+            @Override
+            public void onFailure(Call<UserApi.SourceResponse> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "Lỗi lấy nguồn tin toàn cục", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void fetchNews(String rssUrl) {
@@ -211,13 +228,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(MainActivity.this, SettingsActivity.class));
             return true;
         });
-
-        MenuItem logoutItem = menu.add("Đăng Xuất").setIcon(android.R.drawable.ic_menu_revert);
-        logoutItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-        logoutItem.setOnMenuItemClickListener(item -> {
-            preferencesManager.logout();
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
-            finishAffinity();
+        
+        MenuItem profileItem = menu.add("Tài Khoản").setIcon(android.R.drawable.ic_menu_myplaces);
+        profileItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        profileItem.setOnMenuItemClickListener(item -> {
+            startActivity(new Intent(MainActivity.this, ProfileActivity.class));
             return true;
         });
 

@@ -88,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onFailure(Call<AuthResponse> call, Throwable t) {
                 btnLogin.setEnabled(true);
                 btnLogin.setText("Đăng Nhập");
-                Toast.makeText(LoginActivity.this, "Lỗi kết nối Server", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "Lỗi: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

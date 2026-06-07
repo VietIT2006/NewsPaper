@@ -2,9 +2,9 @@ package com.ptithcm.newspaper.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.cardview.widget.CardView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,7 +14,7 @@ import com.ptithcm.newspaper.util.PreferencesManager;
 
 public class AdminDashboardActivity extends AppCompatActivity {
     private TextView tvAdminGreeting;
-    private Button btnManageNews, btnReadNews, btnLogout;
+    private CardView cardManageNews, cardReadNews, cardLogout, cardViewRevenue;
     private PreferencesManager prefs;
 
     @Override
@@ -26,24 +26,28 @@ public class AdminDashboardActivity extends AppCompatActivity {
         User user = prefs.getCurrentUser();
 
         tvAdminGreeting = findViewById(R.id.tvAdminGreeting);
-        btnManageNews = findViewById(R.id.btnManageNews);
-        btnReadNews = findViewById(R.id.btnReadNews);
-        btnLogout = findViewById(R.id.btnLogout);
+        cardManageNews = findViewById(R.id.cardManageNews);
+        cardReadNews = findViewById(R.id.cardReadNews);
+        cardLogout = findViewById(R.id.cardLogout);
+        cardViewRevenue = findViewById(R.id.cardViewRevenue);
 
         if (user != null) {
             tvAdminGreeting.setText("Xin chào Admin: " + user.getUsername());
         }
 
-        btnManageNews.setOnClickListener(v -> {
-            Toast.makeText(this, "Chức năng đang phát triển", Toast.LENGTH_SHORT).show();
-            // Tương lai: startActivity(new Intent(this, SourceManagerActivity.class));
+        cardManageNews.setOnClickListener(v -> {
+            startActivity(new Intent(this, SourceManagerActivity.class));
+        });
+        
+        cardViewRevenue.setOnClickListener(v -> {
+            startActivity(new Intent(AdminDashboardActivity.this, AdminRevenueActivity.class));
         });
 
-        btnReadNews.setOnClickListener(v -> {
+        cardReadNews.setOnClickListener(v -> {
             startActivity(new Intent(AdminDashboardActivity.this, MainActivity.class));
         });
 
-        btnLogout.setOnClickListener(v -> {
+        cardLogout.setOnClickListener(v -> {
             prefs.logout();
             startActivity(new Intent(AdminDashboardActivity.this, LoginActivity.class));
             finishAffinity();

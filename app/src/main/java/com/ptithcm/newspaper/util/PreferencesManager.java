@@ -181,11 +181,11 @@ public class PreferencesManager {
         if (json == null) {
             // Return defaults
             List<RssSource> defaults = new ArrayList<>();
-            defaults.add(new RssSource("Thanh Niên", "https://thanhnien.vn/rss/home.rss", true));
-            defaults.add(new RssSource("VnExpress", "https://vnexpress.net/rss/tin-moi-nhat.rss", false));
-            defaults.add(new RssSource("Tuổi Trẻ", "https://tuoitre.vn/rss/tin-moi-nhat.rss", false));
-            defaults.add(new RssSource("Dân Trí", "https://dantri.com.vn/rss/home.rss", false));
-            defaults.add(new RssSource("Zing News", "https://zingnews.vn/rss/tin-moi.rss", false));
+            defaults.add(new RssSource(1, "Thanh Niên", "https://thanhnien.vn/rss/home.rss", true));
+            defaults.add(new RssSource(2, "VnExpress", "https://vnexpress.net/rss/tin-moi-nhat.rss", false));
+            defaults.add(new RssSource(3, "Tuổi Trẻ", "https://tuoitre.vn/rss/tin-moi-nhat.rss", false));
+            defaults.add(new RssSource(4, "Dân Trí", "https://dantri.com.vn/rss/home.rss", false));
+            defaults.add(new RssSource(5, "Zing News", "https://zingnews.vn/rss/tin-moi.rss", false));
             saveRssSources(defaults);
             return defaults;
         }

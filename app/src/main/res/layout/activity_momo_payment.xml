@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#A50064"
+    android:gravity="center"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Thanh Toán MoMo"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="32dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#FFFFFF"
+        android:padding="24dp"
+        android:gravity="center"
+        android:layout_marginBottom="32dp"
+        android:elevation="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quét mã QR để thanh toán"
+            android:textSize="16sp"
+            android:textColor="#333333"
+            android:layout_marginBottom="16dp"/>
+
+        <ImageView
+            android:id="@+id/ivQrCode"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:padding="4dp"
+            android:scaleType="centerCrop"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="50.000 VNĐ"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#A50064"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nội dung: MUA GÓI PREMIUM"
+            android:textSize="14sp"
+            android:textColor="#666666"/>
+            
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnConfirmPayment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Xác Nhận Đã Chuyển Khoản"
+        android:backgroundTint="#4CAF50"
+        android:textColor="#FFFFFF"
+        android:padding="16dp"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/tvCancelPayment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hủy giao dịch"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:layout_marginTop="16dp"/>
+</LinearLayout>

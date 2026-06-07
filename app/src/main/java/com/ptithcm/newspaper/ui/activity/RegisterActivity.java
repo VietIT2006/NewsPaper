@@ -79,7 +79,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onFailure(Call<AuthResponse> call, Throwable t) {
                 btnRegister.setEnabled(true);
                 btnRegister.setText("Đăng Ký");
-                Toast.makeText(RegisterActivity.this, "Lỗi kết nối Server", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, "Lỗi: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

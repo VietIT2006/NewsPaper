@@ -20,18 +20,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ptithcm.newspaper.R;
+import com.ptithcm.newspaper.data.model.AuthResponse;
 import com.ptithcm.newspaper.data.model.RssSource;
-import com.ptithcm.newspaper.util.PreferencesManager;
+import com.ptithcm.newspaper.data.remote.BackendApiClient;
+import com.ptithcm.newspaper.data.remote.UserApi;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class SourceManagerActivity extends AppCompatActivity {
 
-    private PreferencesManager preferencesManager;
     private RecyclerView recyclerSources;
     private SourceAdapter adapter;
-    private List<RssSource> sourceList;
+    private List<RssSource> sourceList = new ArrayList<>();
+    private UserApi userApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,17 +48,10 @@ public class SourceManagerActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("📡 Nguồn tin tức");
+            getSupportActionBar().setTitle("📡 Quản lý nguồn tin (Global)");
         }
 
-        preferencesManager = new PreferencesManager(this);
-
-        // Load sources or initialize defaults
-        sourceList = preferencesManager.getRssSources();
-        if (sourceList == null || sourceList.isEmpty()) {
-            sourceList = getDefaultSources();
-            preferencesManager.saveRssSources(sourceList);
-        }
+        userApi = BackendApiClient.getClient().create(UserApi.class);
 
         recyclerSources = findViewById(R.id.recyclerSources);
         recyclerSources.setLayoutManager(new LinearLayoutManager(this));
@@ -61,16 +60,30 @@ public class SourceManagerActivity extends AppCompatActivity {
 
         Button btnAddSource = findViewById(R.id.btnAddSource);
         btnAddSource.setOnClickListener(v -> showAddSourceDialog());
+
+        loadSources();
     }
 
-    private List<RssSource> getDefaultSources() {
-        List<RssSource> defaults = new ArrayList<>();
-        defaults.add(new RssSource("Thanh Niên", "https://thanhnien.vn/rss/home.rss", true));
-        defaults.add(new RssSource("VnExpress", "https://vnexpress.net/rss/tin-moi-nhat.rss", false));
-        defaults.add(new RssSource("Tuổi Trẻ", "https://tuoitre.vn/rss/tin-moi-nhat.rss", false));
-        defaults.add(new RssSource("Dân Trí", "https://dantri.com.vn/rss/home.rss", false));
-        defaults.add(new RssSource("Zing News", "https://zingnews.vn/rss/tin-moi.rss", false));
-        return defaults;
+    private void loadSources() {
+        userApi.getSources().enqueue(new Callback<UserApi.SourceResponse>() {
+            @Override
+            public void onResponse(Call<UserApi.SourceResponse> call, Response<UserApi.SourceResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().success) {
+                    sourceList.clear();
+                    if (response.body().sources != null) {
+                        sourceList.addAll(response.body().sources);
+                    }
+                    adapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(SourceManagerActivity.this, "Lỗi lấy dữ liệu từ server", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserApi.SourceResponse> call, Throwable t) {
+                Toast.makeText(SourceManagerActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void showAddSourceDialog() {
@@ -97,17 +110,27 @@ public class SourceManagerActivity extends AppCompatActivity {
                         Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    sourceList.add(new RssSource(name, url, true));
-                    adapter.notifyItemInserted(sourceList.size() - 1);
-                    saveSources();
-                    Toast.makeText(this, "Đã thêm nguồn tin: " + name, Toast.LENGTH_SHORT).show();
+                    
+                    UserApi.SourceRequest req = new UserApi.SourceRequest(name, url);
+                    userApi.addSource(req).enqueue(new Callback<AuthResponse>() {
+                        @Override
+                        public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+                            if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                                Toast.makeText(SourceManagerActivity.this, "Đã thêm thành công", Toast.LENGTH_SHORT).show();
+                                loadSources(); // Tải lại danh sách
+                            } else {
+                                Toast.makeText(SourceManagerActivity.this, "Thất bại", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<AuthResponse> call, Throwable t) {
+                            Toast.makeText(SourceManagerActivity.this, "Lỗi mạng", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 })
                 .setNegativeButton("Hủy", null)
                 .show();
-    }
-
-    private void saveSources() {
-        preferencesManager.saveRssSources(sourceList);
     }
 
     @Override
@@ -135,18 +158,33 @@ public class SourceManagerActivity extends AppCompatActivity {
             holder.tvSourceName.setText(source.getName());
             holder.tvSourceUrl.setText(source.getUrl());
 
-            // Remove listener before setting checked to avoid triggering
             holder.switchSource.setOnCheckedChangeListener(null);
             holder.switchSource.setChecked(source.isEnabled());
             holder.switchSource.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                source.setEnabled(isChecked);
-                saveSources();
+                UserApi.SourceToggleRequest req = new UserApi.SourceToggleRequest(isChecked);
+                userApi.toggleSource(source.getId(), req).enqueue(new Callback<AuthResponse>() {
+                    @Override
+                    public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+                        if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                            source.setEnabled(isChecked);
+                        } else {
+                            holder.switchSource.setChecked(!isChecked); // revert
+                            Toast.makeText(SourceManagerActivity.this, "Lỗi cập nhật", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<AuthResponse> call, Throwable t) {
+                        holder.switchSource.setChecked(!isChecked); // revert
+                        Toast.makeText(SourceManagerActivity.this, "Lỗi mạng", Toast.LENGTH_SHORT).show();
+                    }
+                });
             });
         }
 
         @Override
         public int getItemCount() {
-            return sourceList != null ? sourceList.size() : 0;
+            return sourceList.size();
         }
 
         class SourceViewHolder extends RecyclerView.ViewHolder {

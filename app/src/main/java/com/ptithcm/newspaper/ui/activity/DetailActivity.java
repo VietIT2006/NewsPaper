@@ -29,6 +29,7 @@ import com.ptithcm.newspaper.R;
 import com.ptithcm.newspaper.data.model.Article;
 import com.ptithcm.newspaper.util.OfflineManager;
 import com.ptithcm.newspaper.util.PreferencesManager;
+import com.ptithcm.newspaper.data.model.User;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -106,6 +107,10 @@ public class DetailActivity extends AppCompatActivity implements TextToSpeech.On
         setupTtsControls();
         setupReaderMode();
 
+        loadArticleContent();
+    }
+
+    private void loadArticleContent() {
         if (currentArticleLink != null) {
             if (offlineManager.isArticleSaved(currentArticleLink)) {
                 String savedHtml = offlineManager.getArticle(currentArticleLink);
@@ -130,34 +135,35 @@ public class DetailActivity extends AppCompatActivity implements TextToSpeech.On
 
     private void setupTtsControls() {
         btnTtsPlay.setOnClickListener(v -> {
-            if (!isTtsReady) {
-                Toast.makeText(this, getString(R.string.tts_not_available), Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (plainTextContent.isEmpty()) {
-                Toast.makeText(this, getString(R.string.tts_no_content), Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (isPlayingTts) {
-                textToSpeech.stop();
-                isPlayingTts = false;
-                btnTtsPlay.setImageResource(android.R.drawable.ic_media_play);
-            } else {
-                textToSpeech.setSpeechRate(ttsSpeed);
-                // Split text into chunks to avoid TTS limits
-                int chunkSize = 3000;
-                for (int i = 0; i < plainTextContent.length(); i += chunkSize) {
-                    String chunk = plainTextContent.substring(i, Math.min(plainTextContent.length(), i + chunkSize));
-                    if (i == 0) {
-                        textToSpeech.speak(chunk, TextToSpeech.QUEUE_FLUSH, null, "TTS_ID");
-                    } else {
-                        textToSpeech.speak(chunk, TextToSpeech.QUEUE_ADD, null, "TTS_ID");
-                    }
+            checkPremiumAndRun(() -> {
+                if (!isTtsReady) {
+                    Toast.makeText(this, getString(R.string.tts_not_available), Toast.LENGTH_SHORT).show();
+                    return;
                 }
-                isPlayingTts = true;
-                btnTtsPlay.setImageResource(android.R.drawable.ic_media_pause);
-            }
+                if (plainTextContent.isEmpty()) {
+                    Toast.makeText(this, getString(R.string.tts_no_content), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (isPlayingTts) {
+                    textToSpeech.stop();
+                    isPlayingTts = false;
+                    btnTtsPlay.setImageResource(android.R.drawable.ic_media_play);
+                } else {
+                    textToSpeech.setSpeechRate(ttsSpeed);
+                    int chunkSize = 3000;
+                    for (int i = 0; i < plainTextContent.length(); i += chunkSize) {
+                        String chunk = plainTextContent.substring(i, Math.min(plainTextContent.length(), i + chunkSize));
+                        if (i == 0) {
+                            textToSpeech.speak(chunk, TextToSpeech.QUEUE_FLUSH, null, "TTS_ID");
+                        } else {
+                            textToSpeech.speak(chunk, TextToSpeech.QUEUE_ADD, null, "TTS_ID");
+                        }
+                    }
+                    isPlayingTts = true;
+                    btnTtsPlay.setImageResource(android.R.drawable.ic_media_pause);
+                }
+            });
         });
 
         btnTtsStop.setOnClickListener(v -> {
@@ -183,10 +189,11 @@ public class DetailActivity extends AppCompatActivity implements TextToSpeech.On
 
     private void setupReaderMode() {
         btnReaderMode.setOnClickListener(v -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            View view = getLayoutInflater().inflate(R.layout.dialog_reader_settings, null);
-            builder.setView(view);
-            AlertDialog dialog = builder.create();
+            checkPremiumAndRun(() -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                View view = getLayoutInflater().inflate(R.layout.dialog_reader_settings, null);
+                builder.setView(view);
+                AlertDialog dialog = builder.create();
 
             Button btnClose = view.findViewById(R.id.btnCloseReaderSettings);
             btnClose.setOnClickListener(view1 -> dialog.dismiss());
@@ -243,6 +250,7 @@ public class DetailActivity extends AppCompatActivity implements TextToSpeech.On
             btnBgDark.setOnClickListener(bgListener);
 
             dialog.show();
+            });
         });
     }
 
@@ -486,18 +494,20 @@ public class DetailActivity extends AppCompatActivity implements TextToSpeech.On
             shareIntent.putExtra(Intent.EXTRA_TEXT, currentArticleLink);
             startActivity(Intent.createChooser(shareIntent, getString(R.string.share_via)));
             return true;
-        } else if (item.getItemId() == 3) { // AI Summary
-            showAiSummary();
+        } else if (item.getItemId() == 3) { // Tóm tắt bằng AI
+            checkPremiumAndRun(() -> showAiSummary());
             return true;
-        } else if (item.getItemId() == 4) { // Chat AI
-            if (plainTextContent != null && !plainTextContent.isEmpty()) {
-                Intent chatIntent = new Intent(this, AiChatActivity.class);
-                chatIntent.putExtra("ARTICLE_CONTENT", plainTextContent);
-                chatIntent.putExtra("ARTICLE_TITLE", currentArticleTitle);
-                startActivity(chatIntent);
-            } else {
-                Toast.makeText(this, getString(R.string.ai_chat_no_content), Toast.LENGTH_SHORT).show();
-            }
+        } else if (item.getItemId() == 4) { // AI Chat
+            checkPremiumAndRun(() -> {
+                if (plainTextContent != null && !plainTextContent.isEmpty()) {
+                    Intent chatIntent = new Intent(this, AiChatActivity.class);
+                    chatIntent.putExtra("ARTICLE_CONTENT", plainTextContent);
+                    chatIntent.putExtra("ARTICLE_TITLE", currentArticleTitle);
+                    startActivity(chatIntent);
+                } else {
+                    Toast.makeText(this, getString(R.string.ai_chat_no_content), Toast.LENGTH_SHORT).show();
+                }
+            });
             return true;
         } else if (item.getItemId() == 5) { // Save Offline
             if (currentArticleLink != null && currentArticleHtml != null) {
@@ -520,6 +530,42 @@ public class DetailActivity extends AppCompatActivity implements TextToSpeech.On
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void checkPremiumAndRun(Runnable action) {
+        User user = preferencesManager.getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "Vui lòng đăng nhập lại.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (user.isPremium()) {
+            action.run();
+            return;
+        }
+
+        com.ptithcm.newspaper.data.remote.UserApi userApi = com.ptithcm.newspaper.data.remote.BackendApiClient.getClient().create(com.ptithcm.newspaper.data.remote.UserApi.class);
+        userApi.useFeature(new com.ptithcm.newspaper.data.remote.UserApi.UserIdRequest(user.getId())).enqueue(new retrofit2.Callback<com.ptithcm.newspaper.data.remote.UserApi.FeatureUseResponse>() {
+            @Override
+            public void onResponse(retrofit2.Call<com.ptithcm.newspaper.data.remote.UserApi.FeatureUseResponse> call, retrofit2.Response<com.ptithcm.newspaper.data.remote.UserApi.FeatureUseResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().success) {
+                    user.setFreeUsesLeft(response.body().free_uses_left);
+                    preferencesManager.saveCurrentUser(user);
+                    if (response.body().free_uses_left >= 0) {
+                        Toast.makeText(DetailActivity.this, "Bạn còn " + response.body().free_uses_left + " bài báo miễn phí.", Toast.LENGTH_SHORT).show();
+                    }
+                    action.run();
+                } else {
+                    startActivity(new Intent(DetailActivity.this, PremiumActivity.class));
+                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<com.ptithcm.newspaper.data.remote.UserApi.FeatureUseResponse> call, Throwable t) {
+                Toast.makeText(DetailActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
     
     private void showAiSummary() {

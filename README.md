@@ -79,26 +79,46 @@
 ## 🚀 Bắt Đầu Nhanh
 
 ### Yêu Cầu
+- Node.js (phiên bản 14 trở lên)
+- MySQL Server (để chạy cơ sở dữ liệu)
 - Android Studio (phiên bản mới)
 - Android SDK 24+
 - JDK 11+
 
-### Cài Đặt
+### Bước 1: Khởi động Server (Backend)
+Để chạy được ứng dụng, bạn bắt buộc phải khởi động máy chủ (Backend) trước. Hãy mở Terminal / Command Prompt và chạy lần lượt các lệnh sau:
+
 ```bash
-# 1. Mở Android Studio
-# 2. File → Open → Chọn thư mục NewsPaper2
-# 3. Đợi Gradle Sync hoàn thành
-# 4. Run → Run 'app'
+# Di chuyển vào thư mục backend
+cd NewsPaper2/backend
+
+# Cài đặt các thư viện Node.js cần thiết (Chỉ cần chạy 1 lần)
+npm install
+
+# Khởi động server
+npm start
+npx localtunnel --port 3000
+```
+> **Lưu ý:** Ngay khi chạy `npm start`, Server sẽ kết nối với MySQL và tự động khởi tạo Database `newspaper_db` cùng các bảng dữ liệu nếu chưa có. Hãy giữ cửa sổ Terminal này luôn chạy trong suốt quá trình dùng App.
+
+### Bước 2: Chạy Ứng Dụng (Android)
+Bạn có thể chạy ứng dụng bằng giao diện Android Studio, hoặc dùng dòng lệnh Terminal (trong thư mục gốc `NewsPaper2`):
+
+```bash
+# Di chuyển vào thư mục Android (nếu bạn chưa ở đó)
+cd NewsPaper2
+
+# Xây dựng (Build) và tạo file APK bằng Gradle
+.\gradlew assembleDebug
 ```
 
-### Chạy Ứng Dụng
-```bash
-# Trên thiết bị thật:
-Shift + F10  # Hoặc Run → Run 'app'
+Nếu dùng Android Studio:
+1. Mở Android Studio
+2. Chọn **File → Open** → Tìm đến thư mục `NewsPaper2` và mở nó lên.
+3. Đợi Android Studio hoàn tất việc tải thư viện (Gradle Sync).
+4. Nhấn phím tắt **Shift + F10** hoặc bấm nút ▶️ **Run 'app'** trên thanh công cụ.
 
-# Trên Emulator:
-Chọn device → Shift + F10
-```
+> **Mẹo:** Nên chạy trên máy ảo (Emulator) đi kèm Android Studio để kết nối tự động với `10.0.2.2` (trỏ về localhost của máy tính). Nếu chạy trên điện thoại thật cắm cáp, bạn cần đổi IP trong `app/src/main/java/com/ptithcm/newspaper/data/remote/BackendApiClient.java` thành IP mạng LAN (Wifi) của máy tính bạn (VD: 192.168.1.x).
 
 ---
 

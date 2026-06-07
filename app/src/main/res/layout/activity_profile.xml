@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F5F5">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarProfile"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:titleTextColor="#FFFFFF"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp">
+
+        <LinearLayout
+            android:id="@+id/layoutProfileBg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:gravity="center">
+
+            <!-- Avatar -->
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@android:drawable/ic_menu_myplaces"
+                android:tint="@color/black"
+                android:background="@drawable/bg_circle_avatar" />
+
+            <!-- Username -->
+            <TextView
+                android:id="@+id/tvUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Username"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginTop="12dp"/>
+
+            <!-- Account Type Badge -->
+            <TextView
+                android:id="@+id/tvAccountType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TÀI KHOẢN THƯỜNG"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:background="#888888"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:layout_marginTop="8dp"/>
+
+            <!-- Free Uses Left -->
+            <TextView
+                android:id="@+id/tvFreeUses"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lượt dùng thử AI: 3/3"
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:layout_marginTop="8dp"/>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <Button
+        android:id="@+id/btnUpgradeVip"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#FFD700"
+        android:textColor="#333333"
+        android:textStyle="bold"
+        android:text="⭐ NÂNG CẤP PREMIUM (50.000đ)" />
+
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#E53935"
+        android:textColor="#FFFFFF"
+        android:text="ĐĂNG XUẤT" />
+
+</LinearLayout>
