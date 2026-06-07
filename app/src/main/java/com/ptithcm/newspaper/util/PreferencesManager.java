@@ -6,7 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.ptithcm.newspaper.data.model.Article;
 import com.ptithcm.newspaper.data.model.RssSource;
-import com.ptithcm.newspaper.data.model.RssSource;
+import com.ptithcm.newspaper.data.model.User;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,6 +34,7 @@ public class PreferencesManager {
     private static final String KEY_FONT_SIZE = "font_size";
     private static final String KEY_FONT_FAMILY = "font_family";
     private static final String KEY_READER_BG = "reader_bg";
+    private static final String KEY_CURRENT_USER = "current_user";
     
     private SharedPreferences favPrefs;
     private SharedPreferences historyPrefs;
@@ -265,5 +266,20 @@ public class PreferencesManager {
             }
         }
         return streak;
+    }
+
+    // --- AUTH METHODS ---
+    public void saveCurrentUser(User user) {
+        settingsPrefs.edit().putString(KEY_CURRENT_USER, gson.toJson(user)).apply();
+    }
+
+    public User getCurrentUser() {
+        String json = settingsPrefs.getString(KEY_CURRENT_USER, null);
+        if (json == null) return null;
+        return gson.fromJson(json, User.class);
+    }
+
+    public void logout() {
+        settingsPrefs.edit().remove(KEY_CURRENT_USER).apply();
     }
 }

@@ -212,6 +212,15 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
+        MenuItem logoutItem = menu.add("Đăng Xuất").setIcon(android.R.drawable.ic_menu_revert);
+        logoutItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        logoutItem.setOnMenuItemClickListener(item -> {
+            preferencesManager.logout();
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            finishAffinity();
+            return true;
+        });
+
         MenuItem searchItem = menu.add(getString(R.string.search)).setIcon(android.R.drawable.ic_menu_search);
         searchItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
 
